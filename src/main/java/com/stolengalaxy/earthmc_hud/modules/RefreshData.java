@@ -4,29 +4,22 @@ import com.stolengalaxy.earthmc_hud.EarthMC_HUD;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.client.MinecraftClient;
 
-public class Hunter extends Module {
+public class RefreshData extends Module {
     private int timer = 0;
-
-    public Hunter(){
-        super(EarthMC_HUD.EarthMC, "Hunter", "");
+    public RefreshData(){
+        super(EarthMC_HUD.EarthMC, "Refresh Data", "");
     }
 
     @Override
     public void onActivate(){
         timer = 0;
-        info("starting!!");
+        info("Starting data refresh");
     }
 
     @EventHandler
     private void onTick(TickEvent.Post event){
         timer++;
-        System.out.println("running");
-        if (timer > 99){
-            MinecraftClient.getInstance().getNetworkHandler().sendChatMessage("Hello World!");
-            timer = 0;
-        }
+        info(String.valueOf(timer));
     }
-
 }

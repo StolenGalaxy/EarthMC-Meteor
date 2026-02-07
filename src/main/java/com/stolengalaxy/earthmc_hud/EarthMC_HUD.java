@@ -2,6 +2,7 @@ package com.stolengalaxy.earthmc_hud;
 
 import com.mojang.logging.LogUtils;
 import com.stolengalaxy.earthmc_hud.modules.Hunter;
+import com.stolengalaxy.earthmc_hud.modules.RefreshData;
 import meteordevelopment.meteorclient.addons.GithubRepo;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
 import meteordevelopment.meteorclient.systems.hud.HudGroup;
@@ -11,7 +12,7 @@ import org.slf4j.Logger;
 
 public class EarthMC_HUD extends MeteorAddon {
     public static final Logger LOG = LogUtils.getLogger();
-    public static final Category CATEGORY = new Category("Example");
+    public static final Category EarthMC = new Category("EarthMC");
     public static final HudGroup HUD_GROUP = new HudGroup("Example");
 
     @Override
@@ -19,6 +20,8 @@ public class EarthMC_HUD extends MeteorAddon {
 
         // Modules
         Modules.get().add(new Hunter());
+
+        Modules.get().add(new RefreshData());
 
         // Commands
 
@@ -30,7 +33,7 @@ public class EarthMC_HUD extends MeteorAddon {
 
     @Override
     public void onRegisterCategories() {
-        Modules.registerCategory(CATEGORY);
+        Modules.registerCategory(EarthMC);
     }
 
     @Override
