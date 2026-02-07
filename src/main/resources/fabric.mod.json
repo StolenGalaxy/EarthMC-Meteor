@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "id": "addon-template",
+  "id": "earthmc_hud",
   "version": "${version}",
-  "name": "Addon Template",
-  "description": "An addon template for Meteor Client addons.",
+  "name": "EarthMC HUD",
+  "description": "A HUD for EarthMC",
   "authors": [
-    "seasnail"
+    "StolenGalaxy"
   ],
   "contact": {
     "sources": "https://github.com/MeteorDevelopment/meteor-addon-template"
@@ -14,11 +14,11 @@
   "environment": "client",
   "entrypoints": {
     "meteor": [
-      "com.example.addon.AddonTemplate"
+      "com.stolengalaxy.earthmc_hud.EarthMC_HUD"
     ]
   },
   "mixins": [
-    "addon-template.mixins.json"
+    "earthmc_hud.mixins.json"
   ],
   "custom": {
     "meteor-client:color": "225,25,25",
