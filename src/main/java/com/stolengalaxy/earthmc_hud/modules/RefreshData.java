@@ -1,7 +1,9 @@
 package com.stolengalaxy.earthmc_hud.modules;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.stolengalaxy.earthmc_hud.EarthMC_HUD;
+import com.stolengalaxy.earthmc_hud.utils.Data;
 import com.stolengalaxy.earthmc_hud.utils.Requests;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.systems.modules.Module;
@@ -37,11 +39,17 @@ public class RefreshData extends Module {
 
     private void refreshPlayerData(){
         System.out.println("Getting player data");
+        JsonArray onlinePlayers = new JsonArray();
 
         Requests.getJson("https://api.earthmc.net/v3/aurora/online")
             .thenAccept(json -> {
-                
+                json.get("players").getAsJsonArray().forEach(player -> {
+                    JsonObject name = player.getAsJsonObject().getAsJsonObject("name");
+                    onlinePlayers.add(name);
+                });
             });
+
+        Data.setOnlinePlayers(onlinePlayers);
 
 
     }
