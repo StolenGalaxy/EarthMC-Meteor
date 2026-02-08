@@ -2,7 +2,7 @@ package com.stolengalaxy.earthmc_hud;
 
 import com.mojang.logging.LogUtils;
 import com.stolengalaxy.earthmc_hud.modules.Hunter;
-import com.stolengalaxy.earthmc_hud.modules.RefreshData;
+import com.stolengalaxy.earthmc_hud.utils.RefreshData;
 import meteordevelopment.meteorclient.addons.GithubRepo;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
 import meteordevelopment.meteorclient.systems.hud.HudGroup;
@@ -21,14 +21,7 @@ public class EarthMC_HUD extends MeteorAddon {
         // Modules
         Modules.get().add(new Hunter());
 
-        Modules.get().add(new RefreshData());
-
-        // Commands
-
-        // HUD
-
-
-
+        RefreshData.init();
     }
 
     @Override
