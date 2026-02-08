@@ -36,16 +36,24 @@ public class RefreshData {
 
     private void refreshPlayerData(){
         System.out.println("Refreshing player data");
-        ArrayList<String> onlinePlayers = new ArrayList<>();
 
-        Requests.getJson("https://api.earthmc.net/v3/aurora/online")
+        Requests.getJson("https://map.earthmc.net/tiles/players.json")
             .thenAccept(json -> {
-                json.get("players").getAsJsonArray().forEach(player -> {
-                    onlinePlayers.add(player.getAsJsonObject().get("name").getAsString());
-                });
-                Data.setOnlinePlayers(onlinePlayers);
+                JsonArray players = json.get("players").getAsJsonArray();
+                Data.setOnlinePlayers(players);
             });
 
+
+
+    }
+
+    private void refreshBaseData(){
+        System.out.println("Refreshing base data");
+
+        Requests.getJson("https://map.earthmc.net/tiles/minecraft_overworld/markers.json")
+            .thenAccept(json -> {
+
+            });
 
 
     }

@@ -1,15 +1,16 @@
 package com.stolengalaxy.earthmc_hud.utils;
 
-import java.util.ArrayList;
+import com.google.gson.JsonArray;
 
 public class Data {
-    private static ArrayList<String> onlinePlayers = new ArrayList<>();
+    private static JsonArray onlinePlayers = new JsonArray();
 
-    public static void setOnlinePlayers(ArrayList<String> players){
+    public static void setOnlinePlayers(JsonArray players){
+
         onlinePlayers = players;
     }
 
-    public ArrayList<String> getOnlinePlayers(){
+    public static JsonArray getOnlinePlayers(){
         return onlinePlayers;
     }
 
