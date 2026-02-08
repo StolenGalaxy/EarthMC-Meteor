@@ -5,21 +5,35 @@ import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
 
+
 public class RefreshData extends Module {
     private int timer = 0;
     public RefreshData(){
-        super(EarthMC_HUD.EarthMC, "Refresh Data", "");
+        super(EarthMC_HUD.EarthMC, "Refresh Data", "Regularly get data from EarthMC API");
     }
 
     @Override
     public void onActivate(){
         timer = 0;
-        info("Starting data refresh");
+        info("Enabling data refreshing");
+
+        refreshPlayerData();
     }
 
     @EventHandler
     private void onTick(TickEvent.Post event){
         timer++;
-        info(String.valueOf(timer));
+
+        if(timer % 100 == 0){
+            refreshPlayerData();
+        }
+        if(timer % 12000 == 0){
+            //(refresh base data in future)
+        }
+
+    }
+
+    private void refreshPlayerData(){
+        System.out.println("Getting player data");
     }
 }
