@@ -3,6 +3,7 @@ package com.stolengalaxy.earthmc_hud.utils;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.concurrent.CompletableFuture;
 
 import com.google.gson.Gson;
@@ -18,7 +19,8 @@ public class Requests {
             .uri(URI.create(url))
             .GET()
             .build();
-
-        return client.sendAsync();
+        return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+            .thenApply(HttpResponse -> HttpResponse.body())
+            .thenApply(body -> gson.fromJson(body, JsonObject.class));
     }
 }
