@@ -6,8 +6,6 @@ import meteordevelopment.meteorclient.events.game.GameJoinedEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.orbit.EventHandler;
 
-import java.util.ArrayList;
-
 
 public class RefreshData {
     private int timer = 0;
@@ -20,6 +18,9 @@ public class RefreshData {
     private static void onGameJoin(GameJoinedEvent event){
         System.out.println("Joined game, starting data refresh.");
 
+        refreshPlayerData();
+        refreshBaseData();
+
     }
 
     @EventHandler
@@ -28,18 +29,18 @@ public class RefreshData {
         if(timer % 400 == 0){
             refreshPlayerData();
         }
-        if(timer % 12000 == 0){
-            //(refresh base data in future)
+        if(timer % 1200 == 0){
+            refreshBaseData();
         }
 
     }
 
-    private void refreshPlayerData(){
+    private static void refreshPlayerData(){
         System.out.println("Refreshing player data");
 
         Requests.getJson("https://map.earthmc.net/tiles/players.json")
             .thenAccept(json -> {
-                JsonArray players = json.get("players").getAsJsonArray();
+                JsonArray players = json.getAsJsonObject().get("players").getAsJsonArray();
                 Data.setOnlinePlayers(players);
             });
 
@@ -47,12 +48,14 @@ public class RefreshData {
 
     }
 
-    private void refreshBaseData(){
+    private static void refreshBaseData(){
         System.out.println("Refreshing base data");
 
         Requests.getJson("https://map.earthmc.net/tiles/minecraft_overworld/markers.json")
             .thenAccept(json -> {
+                JsonArray bases = json.getAsJsonArray().get(0).getAsJsonObject().get("markers").getAsJsonArray();
 
+                System.out.println(bases);
             });
 
 
