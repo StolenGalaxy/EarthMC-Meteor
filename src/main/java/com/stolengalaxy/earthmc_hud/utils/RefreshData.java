@@ -29,7 +29,7 @@ public class RefreshData {
         if(timer % 400 == 0){
             refreshPlayerData();
         }
-        if(timer % 1200 == 0){
+        if(timer % 12000 == 0){
             refreshTownData();
         }
 
@@ -48,15 +48,13 @@ public class RefreshData {
 
                     String playerName = playerObject.get("name").getAsString();
                     JsonObject playerCoords = new JsonObject();
-                    playerCoords.add("X", playerObject.get("x"));
-                    playerCoords.add("Y", playerObject.get("y"));
-                    playerCoords.add("Z", playerObject.get("z"));
+                    playerCoords.add("x", playerObject.get("x"));
+                    playerCoords.add("y", playerObject.get("y"));
+                    playerCoords.add("z", playerObject.get("z"));
 
                     players.add(playerName, playerCoords);
 
                 });
-
-
 
                 Data.setOnlinePlayers(players);
             }).exceptionally(exception -> {
@@ -92,19 +90,16 @@ public class RefreshData {
 
                     }
 
-
                 });
                 Data.setTowns(towns);
                 Data.setNationSpawns(nationSpawns);
+
             })
             .exceptionally(exception -> {
                 System.err.println("Town data retrieval failed: " + exception);
                 exception.printStackTrace();
                 return null;
             });
-
-
-
 
     }
 }

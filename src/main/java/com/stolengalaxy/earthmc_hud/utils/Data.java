@@ -1,7 +1,4 @@
 package com.stolengalaxy.earthmc_hud.utils;
-
-import com.google.gson.JsonArray;
-
 import com.google.gson.JsonObject;
 
 public class Data {
@@ -21,8 +18,16 @@ public class Data {
         towns = townsList;
     }
 
+    public static JsonObject getTowns(){
+        return towns;
+    }
+
     public static void setNationSpawns(JsonObject spawnsList){
         nationSpawns = spawnsList;
+    }
+
+    public static JsonObject getNationSpawns(){
+        return nationSpawns;
     }
 
 }
