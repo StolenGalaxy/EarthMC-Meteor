@@ -22,10 +22,7 @@ public class Hunter extends Module {
     @EventHandler
     private void onTick(TickEvent.Post event){
         timer++;
-        if (timer % 200 == 0){
-            boolean inTown = Calculator.isPlayerInTown("(player name)", "London");
-        }
-    }
 
+    }
 
 }

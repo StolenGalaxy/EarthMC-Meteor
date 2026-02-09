@@ -1,33 +1,15 @@
 package com.stolengalaxy.earthmc_hud.utils;
 import com.google.gson.JsonObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Data {
-    private static JsonObject onlinePlayers = new JsonObject();
-    private static JsonObject towns = new JsonObject();
-    private static JsonObject nationSpawns = new JsonObject();
+    public static JsonObject onlinePlayers = new JsonObject();
+    public static JsonObject towns = new JsonObject();
+    public static List<String> townNames = new ArrayList<>();
+    public static JsonObject nationSpawns = new JsonObject();
 
-    public static void setOnlinePlayers(JsonObject players){
-        onlinePlayers = players;
-    }
 
-    public static JsonObject getOnlinePlayers(){
-        return onlinePlayers;
-    }
-
-    public static void setTowns(JsonObject townsList){
-        towns = townsList;
-    }
-
-    public static JsonObject getTowns(){
-        return towns;
-    }
-
-    public static void setNationSpawns(JsonObject spawnsList){
-        nationSpawns = spawnsList;
-    }
-
-    public static JsonObject getNationSpawns(){
-        return nationSpawns;
-    }
 
 }

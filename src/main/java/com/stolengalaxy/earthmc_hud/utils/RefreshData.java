@@ -56,9 +56,9 @@ public class RefreshData {
 
                 });
 
-                Data.setOnlinePlayers(players);
+                Data.onlinePlayers = players;
             }).exceptionally(exception -> {
-                System.err.println("Player data retrieval failed: " + exception);
+                System.err.println("Failed to get player data: " + exception);
                 exception.printStackTrace();
                 return null;
             });
@@ -81,6 +81,7 @@ public class RefreshData {
                         String townName = town.get("tooltip").getAsString().split("<b>")[1].split("</b>")[0].strip();
                         JsonArray points = town.get("points").getAsJsonArray().get(0).getAsJsonArray().get(0).getAsJsonArray();
                         towns.add(townName, points);
+                        Data.townNames.add(townName);
 
                     } else if (town.toString().contains("point")) {
                         String nationName = town.get("tooltip").getAsString().split("<b>")[1].split("</b>")[0].strip();
@@ -91,12 +92,12 @@ public class RefreshData {
                     }
 
                 });
-                Data.setTowns(towns);
-                Data.setNationSpawns(nationSpawns);
+                Data.towns = towns;
+                Data.nationSpawns = nationSpawns;
 
             })
             .exceptionally(exception -> {
-                System.err.println("Town data retrieval failed: " + exception);
+                System.err.println("Failed to get town data: " + exception);
                 exception.printStackTrace();
                 return null;
             });
