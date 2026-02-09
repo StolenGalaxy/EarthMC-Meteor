@@ -1,6 +1,7 @@
 package com.stolengalaxy.earthmc_hud.modules;
 
 import com.stolengalaxy.earthmc_hud.EarthMC_HUD;
+import com.stolengalaxy.earthmc_hud.utils.Calculator;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
@@ -21,6 +22,9 @@ public class Hunter extends Module {
     @EventHandler
     private void onTick(TickEvent.Post event){
         timer++;
+        if (timer % 200 == 0){
+            boolean inTown = Calculator.isPlayerInTown("(player name)", "London");
+        }
     }
 
 
