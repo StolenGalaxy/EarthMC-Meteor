@@ -44,8 +44,6 @@ public class RefreshData {
                 Data.setOnlinePlayers(players);
             });
 
-
-
     }
 
     private static void refreshBaseData(){
@@ -55,7 +53,12 @@ public class RefreshData {
             .thenAccept(json -> {
                 JsonArray bases = json.getAsJsonArray().get(0).getAsJsonObject().get("markers").getAsJsonArray();
 
-                System.out.println(bases);
+                bases.forEach(base_element -> {
+                    JsonObject base = base_element.getAsJsonObject();
+
+                    String baseName = base.get("tooltip").getAsString().split("<b>")[1].split("</b>")[0].strip();
+                    System.out.println(baseName);
+                });
             });
 
 
