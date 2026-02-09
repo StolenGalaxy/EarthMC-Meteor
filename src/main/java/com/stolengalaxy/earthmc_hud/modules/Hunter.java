@@ -16,7 +16,6 @@ public class Hunter extends Module {
     @Override
     public void onActivate(){
         timer = 0;
-        info("starting!!");
     }
 
     @EventHandler

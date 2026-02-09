@@ -19,7 +19,7 @@ public class RefreshData {
         System.out.println("Joined game, starting data refresh.");
 
         refreshPlayerData();
-        refreshBaseData();
+        refreshTownData();
 
     }
 
@@ -30,7 +30,7 @@ public class RefreshData {
             refreshPlayerData();
         }
         if(timer % 1200 == 0){
-            refreshBaseData();
+            refreshTownData();
         }
 
     }
@@ -40,26 +40,70 @@ public class RefreshData {
 
         Requests.getJson("https://map.earthmc.net/tiles/players.json")
             .thenAccept(json -> {
-                JsonArray players = json.getAsJsonObject().get("players").getAsJsonArray();
+                JsonObject players = new JsonObject();
+
+                JsonArray playersArray = json.getAsJsonObject().get("players").getAsJsonArray();
+                playersArray.forEach(player -> {
+                    JsonObject playerObject = player.getAsJsonObject();
+
+                    String playerName = playerObject.get("name").getAsString();
+                    JsonObject playerCoords = new JsonObject();
+                    playerCoords.add("X", playerObject.get("x"));
+                    playerCoords.add("Y", playerObject.get("y"));
+                    playerCoords.add("Z", playerObject.get("z"));
+
+                    players.add(playerName, playerCoords);
+
+                });
+
+
+
                 Data.setOnlinePlayers(players);
+            }).exceptionally(exception -> {
+                System.err.println("Player data retrieval failed: " + exception);
+                exception.printStackTrace();
+                return null;
             });
 
     }
 
-    private static void refreshBaseData(){
-        System.out.println("Refreshing base data");
+    private static void refreshTownData(){
+        System.out.println("Refreshing town data");
 
         Requests.getJson("https://map.earthmc.net/tiles/minecraft_overworld/markers.json")
             .thenAccept(json -> {
-                JsonArray bases = json.getAsJsonArray().get(0).getAsJsonObject().get("markers").getAsJsonArray();
+                JsonArray towns_data = json.getAsJsonArray().get(0).getAsJsonObject().get("markers").getAsJsonArray();
+                JsonObject towns = new JsonObject();
 
-                bases.forEach(base_element -> {
-                    JsonObject base = base_element.getAsJsonObject();
+                JsonObject nationSpawns = new JsonObject();
 
-                    String baseName = base.get("tooltip").getAsString().split("<b>")[1].split("</b>")[0].strip();
-                    System.out.println(baseName);
+                towns_data.forEach(town_element -> {
+                    JsonObject town = town_element.getAsJsonObject();
+                    if(town.toString().contains("points")){
+                        String townName = town.get("tooltip").getAsString().split("<b>")[1].split("</b>")[0].strip();
+                        JsonArray points = town.get("points").getAsJsonArray().get(0).getAsJsonArray().get(0).getAsJsonArray();
+                        towns.add(townName, points);
+
+                    } else if (town.toString().contains("point")) {
+                        String nationName = town.get("tooltip").getAsString().split("<b>")[1].split("</b>")[0].strip();
+                        JsonObject spawnPoint = town.get("point").getAsJsonObject();
+
+                        nationSpawns.add(nationName, spawnPoint);
+
+                    }
+
+
                 });
+                Data.setTowns(towns);
+                Data.setNationSpawns(nationSpawns);
+            })
+            .exceptionally(exception -> {
+                System.err.println("Town data retrieval failed: " + exception);
+                exception.printStackTrace();
+                return null;
             });
+
+
 
 
     }

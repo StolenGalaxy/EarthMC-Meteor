@@ -8,7 +8,6 @@ import java.util.concurrent.CompletableFuture;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 public class Requests {
 
@@ -16,7 +15,6 @@ public class Requests {
     private static final Gson gson = new Gson();
 
     public static CompletableFuture<JsonElement> getJson(String url){
-        System.out.println("getting!!");
         HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create(url))
             .GET()

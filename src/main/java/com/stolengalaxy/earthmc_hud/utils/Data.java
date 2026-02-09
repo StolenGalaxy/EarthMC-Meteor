@@ -2,22 +2,27 @@ package com.stolengalaxy.earthmc_hud.utils;
 
 import com.google.gson.JsonArray;
 
+import com.google.gson.JsonObject;
+
 public class Data {
-    private static JsonArray onlinePlayers = new JsonArray();
+    private static JsonObject onlinePlayers = new JsonObject();
+    private static JsonObject towns = new JsonObject();
+    private static JsonObject nationSpawns = new JsonObject();
 
-    private static JsonArray bases = new JsonArray();
-
-    public static void setOnlinePlayers(JsonArray players){
-
+    public static void setOnlinePlayers(JsonObject players){
         onlinePlayers = players;
     }
 
-    public static JsonArray getOnlinePlayers(){
+    public static JsonObject getOnlinePlayers(){
         return onlinePlayers;
     }
 
-    public static void setBases(JsonArray basesList){
-        bases = basesList;
+    public static void setTowns(JsonObject townsList){
+        towns = townsList;
+    }
+
+    public static void setNationSpawns(JsonObject spawnsList){
+        nationSpawns = spawnsList;
     }
 
 }
