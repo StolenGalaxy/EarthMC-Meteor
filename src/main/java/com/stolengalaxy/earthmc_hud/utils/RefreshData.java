@@ -53,10 +53,10 @@ public class RefreshData {
                     playerCoords.add("z", playerObject.get("z"));
 
                     players.add(playerName, playerCoords);
+                    Data.visiblePlayerNames.add(playerName);
 
                 });
-
-                Data.onlinePlayers = players;
+                Data.visiblePlayers = players;
             }).exceptionally(exception -> {
                 System.err.println("Failed to get player data: " + exception);
                 exception.printStackTrace();

@@ -4,14 +4,15 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.awt.Polygon;
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class Calculator {
     public static boolean isPlayerInTown(String playerName, String townName){
 
-        if(Data.onlinePlayers.has(playerName)){
-            JsonObject playerCoords = Data.onlinePlayers.get(playerName).getAsJsonObject();
+        if(Data.visiblePlayers.has(playerName)){
+            JsonObject playerCoords = Data.visiblePlayers.get(playerName).getAsJsonObject();
             JsonArray townCoords = Data.towns.get(townName).getAsJsonArray();
 
             Polygon townShape = new Polygon();
@@ -36,5 +37,16 @@ public class Calculator {
             }
         }
         return in_a_town;
+    }
+    public static List<String> findOutOfTownPlayers(){
+        List<String> visiblePlayerNames = Data.visiblePlayerNames;
+
+        List<String> playersOutOfTowns = new ArrayList<>();
+        visiblePlayerNames.forEach(name -> {
+            if(!isPlayerInAnyTown(name)){
+                playersOutOfTowns.add(name);
+            }
+        });
+        return playersOutOfTowns;
     }
 }
