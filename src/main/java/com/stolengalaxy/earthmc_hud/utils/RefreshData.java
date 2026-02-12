@@ -6,6 +6,9 @@ import meteordevelopment.meteorclient.events.game.GameJoinedEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.orbit.EventHandler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class RefreshData {
     private int timer = 0;
@@ -14,6 +17,8 @@ public class RefreshData {
         MeteorClient.EVENT_BUS.subscribe(new RefreshData());
     }
 
+    public record Town (String name, JsonArray points, List<Integer> extrema){}
+    //TODO Nation spawns record
     @EventHandler
     private static void onGameJoin(GameJoinedEvent event){
         System.out.println("Joined game, starting data refresh.");
@@ -73,20 +78,32 @@ public class RefreshData {
                 JsonArray towns_data = json.getAsJsonArray().get(0).getAsJsonObject().get("markers").getAsJsonArray();
                 JsonObject towns = new JsonObject();
 
-                JsonObject nationSpawns = new JsonObject();
+                JsonObject  nationSpawns = new JsonObject();
 
                 towns_data.forEach(town_element -> {
-                    JsonObject town = town_element.getAsJsonObject();
-                    if(town.toString().contains("points")){
-                        String townName = town.get("tooltip").getAsString().split("<b>")[1].split("</b>")[0].strip();
-                        JsonArray points = town.get("points").getAsJsonArray().get(0).getAsJsonArray().get(0).getAsJsonArray();
+                    JsonObject town_object = town_element.getAsJsonObject();
+                    if(town_object.toString().contains("points")){
+                        String townName = town_object.get("tooltip").getAsString().split("<b>")[1].split("</b>")[0].strip();
+                        JsonArray points = town_object.get("points").getAsJsonArray().get(0).getAsJsonArray().get(0).getAsJsonArray();
+
+                        Integer max_x = points.get(0).getAsJsonObject().get("x").getAsInt();
+                        Integer max_z = points.get(0).getAsJsonObject().get("z").getAsInt();
+                        Integer min_x = max_x;
+                        Integer min_z = max_z;
+
+                        points.forEach(point -> {
+
+                        });
+
+                        List<Integer> extrema = new ArrayList<>(List.of(max_x, min_x, max_z, min_z));
+
+                        Town town = new Town(townName, points, extrema);
                         towns.add(townName, points);
                         Data.townNames.add(townName);
 
-                    } else if (town.toString().contains("point")) {
-                        String nationName = town.get("tooltip").getAsString().split("<b>")[1].split("</b>")[0].strip();
-                        JsonObject spawnPoint = town.get("point").getAsJsonObject();
-
+                    } else if (town_object.toString().contains("point")) {
+                        String nationName = town_object.get("tooltip").getAsString().split("<b>")[1].split("</b>")[0].strip();
+                        JsonObject spawnPoint = town_object.get("point").getAsJsonObject();
                         nationSpawns.add(nationName, spawnPoint);
 
                     }
