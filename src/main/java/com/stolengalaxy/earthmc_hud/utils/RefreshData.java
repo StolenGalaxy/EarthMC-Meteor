@@ -86,14 +86,29 @@ public class RefreshData {
                         String townName = town_object.get("tooltip").getAsString().split("<b>")[1].split("</b>")[0].strip();
                         JsonArray points = town_object.get("points").getAsJsonArray().get(0).getAsJsonArray().get(0).getAsJsonArray();
 
-                        Integer max_x = points.get(0).getAsJsonObject().get("x").getAsInt();
-                        Integer max_z = points.get(0).getAsJsonObject().get("z").getAsInt();
-                        Integer min_x = max_x;
-                        Integer min_z = max_z;
+                        int max_x = points.get(0).getAsJsonObject().get("x").getAsInt();
+                        int max_z = points.get(0).getAsJsonObject().get("z").getAsInt();
+                        int min_x = max_x;
+                        int min_z = max_z;
 
-                        points.forEach(point -> {
+                        for(int i = 1; i < points.size(); i++){
+                            JsonObject point = points.get(i).getAsJsonObject();
+                            int this_x = point.getAsJsonObject().get("x").getAsInt();
+                            int this_z = point.getAsJsonObject().get("z").getAsInt();
 
-                        });
+                            if(this_x > max_x){
+                                max_x = this_x;
+                            }else if (this_x < min_x){
+                                min_x = this_x;
+                            }
+
+                            if(this_z > max_z){
+                                max_z = this_z;
+                            }else if (this_z < min_z){
+                                min_z = this_z;
+                            }
+                        }
+
 
                         List<Integer> extrema = new ArrayList<>(List.of(max_x, min_x, max_z, min_z));
 
