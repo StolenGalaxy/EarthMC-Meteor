@@ -48,6 +48,7 @@ public class RefreshData {
         Requests.getJson("https://map.earthmc.net/tiles/players.json")
             .thenAccept(json -> {
                 JsonObject players = new JsonObject();
+                List<String> visiblePlayerNames = new ArrayList<>();
 
                 JsonArray playersArray = json.getAsJsonObject().get("players").getAsJsonArray();
                 playersArray.forEach(player -> {
@@ -60,10 +61,11 @@ public class RefreshData {
                     playerCoords.add("z", playerObject.get("z"));
 
                     players.add(playerName, playerCoords);
-                    Data.visiblePlayerNames.add(playerName);
+                    visiblePlayerNames.add(playerName);
 
                 });
                 Data.visiblePlayers = players;
+                Data.visiblePlayerNames = visiblePlayerNames;
             }).exceptionally(exception -> {
                 System.err.println("Failed to get player data: " + exception);
                 exception.printStackTrace();
@@ -113,8 +115,6 @@ public class RefreshData {
 
 
                         List<Integer> extrema = new ArrayList<>(List.of(max_x, min_x, max_z, min_z));
-
-
 
                         Town town = new Town(townName, points, extrema);
 

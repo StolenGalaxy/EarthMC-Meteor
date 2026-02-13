@@ -12,6 +12,7 @@ import com.stolengalaxy.earthmc_hud.utils.RefreshData.Town;
 
 import static com.stolengalaxy.earthmc_hud.utils.Data.townNames;
 
+import java.util.Collections;
 
 public class Calculator {
     public static boolean isPlayerInTown(String playerName, String townName){
@@ -37,6 +38,7 @@ public class Calculator {
     public static JsonArray getNearbyTowns(String playerName){
         Map<String, Town> towns = Data.towns;
         JsonObject playerCoords = Data.visiblePlayers.get(playerName).getAsJsonObject();
+
         JsonArray nearbyTowns = new JsonArray();
         townNames.forEach(townName -> {
             if(playerCoords.get("x").getAsInt() >= towns.get(townName).extrema().get(1)){
@@ -49,11 +51,12 @@ public class Calculator {
                 }
             }
         });
-
         return nearbyTowns;
     }
 
     public static boolean isPlayerInAnyTown(String playerName){
+        System.out.println("Finding nearby towns to " + playerName);
+
         JsonArray nearbyTowns = getNearbyTowns(playerName);
 
         boolean in_a_town = false;
