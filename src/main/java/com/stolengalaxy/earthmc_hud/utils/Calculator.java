@@ -55,8 +55,6 @@ public class Calculator {
     }
 
     public static boolean isPlayerInAnyTown(String playerName){
-        System.out.println("Finding nearby towns to " + playerName);
-
         JsonArray nearbyTowns = getNearbyTowns(playerName);
 
         boolean in_a_town = false;
