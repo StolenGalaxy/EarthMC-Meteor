@@ -1,6 +1,7 @@
 package com.stolengalaxy.earthmc_hud.utils;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.awt.Polygon;
 import java.util.ArrayList;
@@ -8,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.stolengalaxy.earthmc_hud.utils.RefreshData.Town;
+
+import static com.stolengalaxy.earthmc_hud.utils.Data.townNames;
 
 
 public class Calculator {
@@ -35,7 +38,7 @@ public class Calculator {
         Map<String, Town> towns = Data.towns;
         JsonObject playerCoords = Data.visiblePlayers.get(playerName).getAsJsonObject();
         JsonArray nearbyTowns = new JsonArray();
-        Data.townNames.forEach(townName -> {
+        townNames.forEach(townName -> {
             if(playerCoords.get("x").getAsInt() >= towns.get(townName).extrema().get(1)){
                 if(playerCoords.get("x").getAsInt() <= towns.get(townName).extrema().get(0)){
                     if(playerCoords.get("z").getAsInt() >= towns.get(townName).extrema().get(3)){
@@ -51,12 +54,11 @@ public class Calculator {
     }
 
     public static boolean isPlayerInAnyTown(String playerName){
-        List<String> townNames = Data.townNames;
+        JsonArray nearbyTowns = getNearbyTowns(playerName);
 
         boolean in_a_town = false;
-
-        for (String townName : townNames) {
-
+        for (JsonElement townNameElement : nearbyTowns) {
+            String townName = townNameElement.getAsString();
             if(isPlayerInTown(playerName, townName)){
                 in_a_town = true;
                 break;

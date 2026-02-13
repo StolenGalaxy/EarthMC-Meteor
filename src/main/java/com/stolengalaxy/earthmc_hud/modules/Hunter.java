@@ -33,6 +33,7 @@ public class Hunter extends Module {
 
     private void findTargets(){
         Calculator.findOutOfTownPlayers().forEach(name -> {
+            System.out.println(name);
         });
     }
 
