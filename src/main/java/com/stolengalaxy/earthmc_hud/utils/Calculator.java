@@ -2,15 +2,12 @@ package com.stolengalaxy.earthmc_hud.utils;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
 import java.awt.Polygon;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import com.stolengalaxy.earthmc_hud.utils.RefreshData.Town;
 
-import static java.lang.System.nanoTime;
+import com.stolengalaxy.earthmc_hud.utils.RefreshData.Town;
 
 
 public class Calculator {
