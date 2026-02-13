@@ -1,6 +1,5 @@
 package com.stolengalaxy.earthmc_hud;
 
-import com.mojang.logging.LogUtils;
 import com.stolengalaxy.earthmc_hud.modules.Hunter;
 import com.stolengalaxy.earthmc_hud.utils.RefreshData;
 import meteordevelopment.meteorclient.addons.GithubRepo;
