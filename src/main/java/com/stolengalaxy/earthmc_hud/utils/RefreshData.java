@@ -7,7 +7,9 @@ import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.orbit.EventHandler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class RefreshData {
@@ -76,8 +78,8 @@ public class RefreshData {
         Requests.getJson("https://map.earthmc.net/tiles/minecraft_overworld/markers.json")
             .thenAccept(json -> {
                 JsonArray towns_data = json.getAsJsonArray().get(0).getAsJsonObject().get("markers").getAsJsonArray();
-                JsonObject towns = new JsonObject();
 
+                Map<String, Town> towns = new HashMap<>();
                 JsonObject  nationSpawns = new JsonObject();
 
                 towns_data.forEach(town_element -> {
@@ -112,8 +114,11 @@ public class RefreshData {
 
                         List<Integer> extrema = new ArrayList<>(List.of(max_x, min_x, max_z, min_z));
 
+
+
                         Town town = new Town(townName, points, extrema);
-                        towns.add(townName, points);
+
+                        towns.put(townName, town);
                         Data.townNames.add(townName);
 
                     } else if (town_object.toString().contains("point")) {
