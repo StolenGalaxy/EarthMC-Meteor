@@ -12,8 +12,6 @@ import com.stolengalaxy.earthmc_hud.utils.RefreshData.Town;
 
 import static com.stolengalaxy.earthmc_hud.utils.Data.townNames;
 
-import java.util.Collections;
-
 public class Calculator {
     public static boolean isPlayerInTown(String playerName, String townName){
 
