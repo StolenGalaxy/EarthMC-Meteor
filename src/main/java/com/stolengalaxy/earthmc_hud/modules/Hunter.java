@@ -13,6 +13,8 @@ public class Hunter extends Module {
         super(EarthMC_HUD.EarthMC, "Hunter", "");
     }
 
+    public static String currentTarget = "";
+
     @Override
     public void onActivate(){
         timer = 0;
