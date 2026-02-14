@@ -7,12 +7,24 @@ import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import net.minecraft.client.MinecraftClient;
 
 import com.stolengalaxy.earthmc_hud.utils.RefreshData.Town;
-
 import static com.stolengalaxy.earthmc_hud.utils.Data.townNames;
 
 public class Calculator {
+    public static Integer myDistanceToCoords(JsonObject coords){
+        MinecraftClient client = MinecraftClient.getInstance();
+        int xDistance = 0;
+        int zDistance = 0;
+        if(client.player != null){
+            xDistance = coords.get("x").getAsInt() - client.player.getBlockX();
+            zDistance = coords.get("z").getAsInt() - client.player.getBlockZ();
+        }
+        int distance = (int) Math.pow(Math.pow(xDistance, 2) + Math.pow(zDistance, 2), 0.5);
+        return distance;
+    }
+
     public static boolean isPlayerInTown(String playerName, String townName){
 
         if(Data.visiblePlayers.has(playerName)){
