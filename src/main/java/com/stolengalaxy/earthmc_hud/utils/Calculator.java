@@ -76,4 +76,13 @@ public class Calculator {
         });
         return playersOutOfTowns;
     }
+
+    public static Integer distanceBetweenCoords(JsonObject coordsOne, JsonObject coordsTwo){
+        int xDistance = coordsTwo.get("x").getAsInt() - coordsOne.get("x").getAsInt();
+        int zDistance = coordsTwo.get("z").getAsInt() - coordsOne.get("z").getAsInt();
+
+        int distance = (int) Math.pow(Math.pow(xDistance, 2) + Math.pow(zDistance, 2), 0.5);
+
+        return distance;
+    }
 }
