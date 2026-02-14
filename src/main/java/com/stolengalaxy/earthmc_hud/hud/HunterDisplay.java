@@ -19,7 +19,6 @@ public class HunterDisplay extends HudElement {
 
     @Override
     public void render(HudRenderer renderer){
-        System.out.println("render called!");
         setSize(renderer.textWidth("Current target: " + Hunter.currentTarget, true), renderer.textHeight(true));
 
         // Render background
