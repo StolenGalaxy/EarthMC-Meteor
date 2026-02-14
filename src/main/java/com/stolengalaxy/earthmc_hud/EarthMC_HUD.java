@@ -4,19 +4,23 @@ import com.stolengalaxy.earthmc_hud.modules.Hunter;
 import com.stolengalaxy.earthmc_hud.utils.RefreshData;
 import meteordevelopment.meteorclient.addons.GithubRepo;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
+import meteordevelopment.meteorclient.systems.hud.Hud;
 import meteordevelopment.meteorclient.systems.hud.HudGroup;
 import meteordevelopment.meteorclient.systems.modules.Category;
 import meteordevelopment.meteorclient.systems.modules.Modules;
+import com.stolengalaxy.earthmc_hud.hud.HunterDisplay;
 
 public class EarthMC_HUD extends MeteorAddon {
     public static final Category EarthMC = new Category("EarthMC");
-    public static final HudGroup HUD_GROUP = new HudGroup("Example");
+    public static final HudGroup HUD_GROUP = new HudGroup("EarthMC");
 
     @Override
     public void onInitialize() {
 
         Modules.get().add(new Hunter());
         RefreshData.init();
+
+        Hud.get().register(HunterDisplay.INFO);
     }
 
     @Override
@@ -31,6 +35,6 @@ public class EarthMC_HUD extends MeteorAddon {
 
     @Override
     public GithubRepo getRepo() {
-        return new GithubRepo("MeteorDevelopment", "meteor-addon-template");
+        return new GithubRepo("StolenGalaxy", "EarthMC-HUD");
     }
 }
