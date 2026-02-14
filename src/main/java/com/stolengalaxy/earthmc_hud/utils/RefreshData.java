@@ -33,7 +33,7 @@ public class RefreshData {
     @EventHandler
     private void onTick(TickEvent.Post event){
         timer++;
-        if(timer % 400 == 0){
+        if(timer % 150 == 0){
             refreshPlayerData();
         }
         if(timer % 12000 == 0){

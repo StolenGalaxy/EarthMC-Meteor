@@ -74,6 +74,7 @@ public class Calculator {
                 playersOutOfTowns.add(name);
             }
         });
+        //System.out.println(playersOutOfTowns.size() + "/" + visiblePlayerNames.size());
         return playersOutOfTowns;
     }
 
@@ -84,5 +85,24 @@ public class Calculator {
         int distance = (int) Math.pow(Math.pow(xDistance, 2) + Math.pow(zDistance, 2), 0.5);
 
         return distance;
+    }
+
+    public static JsonObject nearestSpawn(String playerName){
+        JsonObject playerCoords = Data.visiblePlayers.get(playerName).getAsJsonObject();
+
+        int closestSpawnDistance = 1000000;
+        String closestSpawnName = "";
+
+        for(String nationName : Data.nationSpawns.keySet()){
+            int distance = distanceBetweenCoords(playerCoords, Data.nationSpawns.get(nationName).getAsJsonObject());
+            if(distance < closestSpawnDistance){
+                closestSpawnDistance = distance;
+                closestSpawnName = nationName;
+            }
+        }
+        JsonObject closestSpawnObject = new JsonObject();
+        closestSpawnObject.addProperty("name", closestSpawnName);
+        closestSpawnObject.addProperty("distance", closestSpawnDistance);
+        return closestSpawnObject;
     }
 }
