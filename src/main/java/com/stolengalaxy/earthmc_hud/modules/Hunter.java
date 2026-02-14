@@ -2,7 +2,6 @@ package com.stolengalaxy.earthmc_hud.modules;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.stolengalaxy.earthmc_hud.EarthMC_HUD;
 import com.stolengalaxy.earthmc_hud.utils.Calculator;
 import com.stolengalaxy.earthmc_hud.utils.Data;
@@ -23,6 +22,11 @@ public class Hunter extends Module {
     public void onActivate(){
         timer = 0;
         findTarget();
+    }
+
+    @Override
+    public void onDeactivate(){
+        currentTarget = "";
     }
 
     @EventHandler
@@ -52,7 +56,7 @@ public class Hunter extends Module {
                 closestNationName = nearestSpawnObject.get("name").getAsString();
             }
         }
-
+        currentTarget = targetName;
         //System.out.println(targetName + " "  + shortestNationSpawnDistance + " " + targetCoords + " " + closestNationName);
 
     }
