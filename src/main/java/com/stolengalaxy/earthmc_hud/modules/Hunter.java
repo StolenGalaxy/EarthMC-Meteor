@@ -15,8 +15,8 @@ import meteordevelopment.orbit.EventHandler;
 
 public class Hunter extends Module {
     private int timer = 0;
-
     private boolean initialActivation = false;
+
 
     //variables for determining when to send baritone command after teleportation in auto hunt mode
     //probably should be reworked in future
@@ -26,16 +26,16 @@ public class Hunter extends Module {
     private boolean expectingTeleportWithoutBaritone = false;
     private int initialDistanceToTarget = 0;
     private JsonObject targetCoords = new JsonObject();
+    public static String currentTarget = "";
+
+    private int targetInvisibleTicks = 0;
 
 
     public Hunter(){
         super(EarthMC_HUD.EarthMC, "Hunter", "Finds optimal hunting targets");
     }
 
-    public static String currentTarget = "";
-
     private final SettingGroup generalSettings = settings.getDefaultGroup();
-
     public final SettingGroup autoHuntSettings = settings.createGroup("Auto Hunting");
 
     private final Setting<Boolean> autoTeleport = autoHuntSettings.add(new BoolSetting.Builder()
@@ -85,8 +85,7 @@ public class Hunter extends Module {
         if(!initialActivation && Data.playersInitialised && Data.townsInitialised){
             findTarget();
             initialActivation = true;
-        }
-        else if(timer % targetRefreshTime.get() == 0 && Data.playersInitialised && Data.townsInitialised && initialActivation){
+        } else if(timer % targetRefreshTime.get() == 0 && Data.playersInitialised && Data.townsInitialised && initialActivation){
             if(expectingTeleportWithoutBaritone || expectingTeleportWithBaritone){
                 if(chatNotifications.get()){
                     info("Finding new target, cancelling teleport and/or Baritone");
@@ -112,13 +111,33 @@ public class Hunter extends Module {
                 expectingTeleportWithoutBaritone = false;
             }
         }
+
+        //if a target is set, and they are not visible on the map, increase their invisible ticks, otherwise reset to 0
+        if(!currentTarget.isEmpty() && !Data.visiblePlayerNames.contains(currentTarget)){
+            targetInvisibleTicks++;
+        } else if (!currentTarget.isEmpty()) {
+            targetInvisibleTicks = 0;
+        }
     }
 
     private void findTarget(){
         System.out.println("Finding target");
+
+        if(!currentTarget.isEmpty() && targetAvailable()){
+            info("Target still available. Continuing.");
+            info(String.valueOf(targetInvisibleTicks));
+            return;
+        } else if (!targetAvailable() && chatNotifications.get()) {
+            info("Target appears to have become unavailable.");
+            if(useBaritone.get()){
+                ChatUtils.sendPlayerMsg("#stop");
+            }
+        }
+
         int shortestNationSpawnDistance = 9999999;
         String closestNationName = "";
         String targetName = "";
+
 
         for(String playerName : Calculator.findOutOfTownPlayers()){
             JsonObject nearestSpawnObject = Calculator.nearestSpawn(playerName);
@@ -131,6 +150,7 @@ public class Hunter extends Module {
                 closestNationName = nearestSpawnObject.get("name").getAsString();
             }
         }
+        targetInvisibleTicks = 0;
         initialDistanceToTarget = Calculator.myDistanceToCoords(targetCoords);
 
         if(chatNotifications.get()){
@@ -160,10 +180,22 @@ public class Hunter extends Module {
     }
 
     private boolean wasTeleportSuccessful(){
-        if(Calculator.myDistanceToCoords(targetCoords) <= initialDistanceToTarget - 100){
-            return true;
-        }else{
-            return false;
+        return Calculator.myDistanceToCoords(targetCoords) <= initialDistanceToTarget - 100;
+    }
+
+    private boolean targetAvailable(){
+        boolean available = true;
+
+        // if target has gone invisible for too long, set to unavailable
+        if(targetInvisibleTicks > 1200){
+            available = false;
         }
+        // if the target has gone inside a town and player is not nearby (so unlikely in combat), set to unavailable
+        if(Data.visiblePlayerNames.contains(currentTarget)){
+            if(Calculator.isPlayerInAnyTown(currentTarget) && Calculator.myDistanceToCoords(targetCoords) > 100){
+                available = false;
+            }
+        }
+        return available;
     }
 }

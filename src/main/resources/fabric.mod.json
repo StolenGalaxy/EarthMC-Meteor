@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "id": "earthmc_hud",
+  "id": "earthmc_meteor",
   "version": "${version}",
-  "name": "EarthMC HUD",
-  "description": "A HUD for EarthMC",
+  "name": "EarthMC Meteor",
+  "description": "Meteor addon for EarthMC",
   "authors": [
     "StolenGalaxy"
   ],
   "contact": {
-    "sources": "https://github.com/MeteorDevelopment/meteor-addon-template"
+    "sources": "https://github.com/StolenGalaxy/EarthMC-Meteor"
   },
   "icon": "assets/template/icon.png",
   "environment": "client",
@@ -17,9 +17,7 @@
       "com.stolengalaxy.earthmc_hud.EarthMC_HUD"
     ]
   },
-  "mixins": [
-    "earthmc_hud.mixins.json"
-  ],
+  "mixins": [],
   "custom": {
     "meteor-client:color": "225,25,25",
     "modmenu": {
