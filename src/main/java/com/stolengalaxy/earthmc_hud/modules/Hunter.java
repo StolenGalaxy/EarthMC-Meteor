@@ -27,7 +27,7 @@ public class Hunter extends Module {
 
 
     public Hunter(){
-        super(EarthMC_HUD.EarthMC, "Hunter", "");
+        super(EarthMC_HUD.EarthMC, "Hunter", "Finds optimal hunting targets");
     }
 
     public static String currentTarget = "";
@@ -43,7 +43,7 @@ public class Hunter extends Module {
     private final Setting<Integer> targetRefreshTime = generalSettings.add(new IntSetting.Builder()
         .name("Target Refresh")
         .description("How often to refresh targets (ticks)")
-        .defaultValue(1000)
+        .defaultValue(2000)
         .min(1000)
         .sliderRange(1000, 36000)
         .build()
@@ -75,12 +75,13 @@ public class Hunter extends Module {
             initialActivation = true;
         }
         else if(timer % targetRefreshTime.get() == 0 && Data.playersInitialised && Data.townsInitialised && initialActivation){
+            expectingTeleport = false;
             findTarget();
         } else if (timer - initialTeleportTime > 150 && expectingTeleport) {
+            ChatUtils.sendPlayerMsg("#stop");
             ChatUtils.sendPlayerMsg(baritoneCommand);
             expectingTeleport = false;
         }
-
 
     }
 
