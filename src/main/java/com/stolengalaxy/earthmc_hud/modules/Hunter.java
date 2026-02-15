@@ -11,10 +11,20 @@ import meteordevelopment.meteorclient.settings.IntSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.utils.player.ChatUtils;
 import meteordevelopment.orbit.EventHandler;
 
 public class Hunter extends Module {
     private int timer = 0;
+
+    private boolean initialActivation = false;
+
+    //variables for determining when to send baritone command after teleportation in auto hunt mode
+    //probably should be reworked in future
+    private String baritoneCommand = "";
+    private int initialTeleportTime = 0;
+    private boolean expectingTeleport = false;
+
 
     public Hunter(){
         super(EarthMC_HUD.EarthMC, "Hunter", "");
@@ -25,22 +35,22 @@ public class Hunter extends Module {
     private final SettingGroup generalSettings = settings.getDefaultGroup();
 
     private final Setting<Boolean> autoHunt = generalSettings.add(new BoolSetting.Builder()
-        .name("Auto Hunt")
-        .description("Uses Baritone to automatically go to target player")
+        .name("Auto Hunt (READ DESCRIPTION!)")
+        .description("Uses Baritone to automatically go to target player\nWARNING: Ensure you have Baritone installed or it will send a chat message!")
         .defaultValue(false)
         .build()
     );
     private final Setting<Integer> targetRefreshTime = generalSettings.add(new IntSetting.Builder()
         .name("Target Refresh")
         .description("How often to refresh targets (ticks)")
-        .defaultValue(750)
-        .min(150)
-        .sliderRange(150, 200000)
+        .defaultValue(1000)
+        .min(1000)
+        .sliderRange(1000, 36000)
         .build()
     );
     private final Setting<Boolean> chatNotifications = generalSettings.add(new BoolSetting.Builder()
         .name("Chat Notifications")
-        .description("Display notifications in chat")
+        .description("Display module notifications in chat")
         .defaultValue(true)
         .build()
     );
@@ -48,7 +58,7 @@ public class Hunter extends Module {
     @Override
     public void onActivate(){
         timer = 0;
-        findTarget();
+        initialActivation = false;
     }
 
     @Override
@@ -59,14 +69,23 @@ public class Hunter extends Module {
     @EventHandler
     private void onTick(TickEvent.Post event){
         timer++;
-        if(timer % targetRefreshTime.get() == 0){
+
+        if(!initialActivation && Data.playersInitialised && Data.townsInitialised){
             findTarget();
+            initialActivation = true;
         }
+        else if(timer % targetRefreshTime.get() == 0 && Data.playersInitialised && Data.townsInitialised && initialActivation){
+            findTarget();
+        } else if (timer - initialTeleportTime > 150 && expectingTeleport) {
+            ChatUtils.sendPlayerMsg(baritoneCommand);
+            expectingTeleport = false;
+        }
+
 
     }
 
-
     private void findTarget(){
+        System.out.println("finding target");
         int shortestNationSpawnDistance = 9999999;
         String closestNationName = "";
         String targetName = "";
@@ -88,8 +107,20 @@ public class Hunter extends Module {
                 + ", "  + targetCoords.getAsJsonObject().get("z") + ")" + "\nNearest nation spawn: "
                 + closestNationName + " (" + shortestNationSpawnDistance + " blocks)");
         }
+        if(autoHunt.get()){
+
+            //if the current distance to the target player is greater than the nearest nation spawn's distance + 100, teleport to the nearest nation spawn
+            if(Calculator.myDistanceToCoords(targetCoords.getAsJsonObject()) > shortestNationSpawnDistance + 100){
+                info("Teleporting to " + closestNationName);
+                ChatUtils.sendPlayerMsg("/n spawn " + closestNationName);
+            }
+
+            baritoneCommand = "#goto " + targetCoords.getAsJsonObject().get("x") + " " + targetCoords.getAsJsonObject().get("z");
+            initialTeleportTime = timer;
+            expectingTeleport = true;
+        }
         currentTarget = targetName;
-        
+
     }
 
 }

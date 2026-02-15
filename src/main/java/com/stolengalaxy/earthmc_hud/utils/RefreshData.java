@@ -66,6 +66,7 @@ public class RefreshData {
                 });
                 Data.visiblePlayers = players;
                 Data.visiblePlayerNames = visiblePlayerNames;
+                Data.playersInitialised = true;
             }).exceptionally(exception -> {
                 System.err.println("Failed to get player data: " + exception);
                 exception.printStackTrace();
@@ -131,6 +132,7 @@ public class RefreshData {
                 });
                 Data.towns = towns;
                 Data.nationSpawns = nationSpawns;
+                Data.townsInitialised = true;
 
             })
             .exceptionally(exception -> {
