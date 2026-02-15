@@ -15,4 +15,8 @@ public class Data {
 
     public static JsonObject nationSpawns = new JsonObject();
 
+    public static boolean playersInitialised = false;
+    public static boolean townsInitialised = false;
+
+
 }
