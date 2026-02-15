@@ -23,7 +23,9 @@ public class Hunter extends Module {
     //probably should be reworked in future
     private String baritoneCommand = "";
     private int initialTeleportTime = 0;
-    private boolean expectingTeleport = false;
+    private boolean expectingTeleportWithBaritone = false;
+    private boolean expectingTeleportWithoutBaritone = false;
+    private String targetNationName = "";
 
 
     public Hunter(){
@@ -85,14 +87,32 @@ public class Hunter extends Module {
             initialActivation = true;
         }
         else if(timer % targetRefreshTime.get() == 0 && Data.playersInitialised && Data.townsInitialised && initialActivation){
-            expectingTeleport = false;
-            findTarget();
-        } else if (timer - initialTeleportTime > 150 && expectingTeleport) {
-            ChatUtils.sendPlayerMsg("#stop");
-            ChatUtils.sendPlayerMsg(baritoneCommand);
-            expectingTeleport = false;
-        }
+            if(expectingTeleportWithoutBaritone || expectingTeleportWithBaritone){
+                if(chatNotifications.get()){
+                    info("Finding new target, cancelling teleport and/or Baritone");
+                }
+                expectingTeleportWithBaritone = false;
+                expectingTeleportWithoutBaritone = false;
+            }
 
+            findTarget();
+        } else if (timer - initialTeleportTime > 150) {
+            if(expectingTeleportWithBaritone){
+                if(wasTeleportSuccessful()){
+                    ChatUtils.sendPlayerMsg("#stop");
+                    ChatUtils.sendPlayerMsg(baritoneCommand);
+                }else if(chatNotifications.get()){
+                    info("Teleport appears to have been unsuccessful. Cancelling Baritone.");
+                }
+                
+                expectingTeleportWithBaritone = false;
+            } else if (expectingTeleportWithoutBaritone) {
+                if(!wasTeleportSuccessful()){
+                    info("Teleport appears to have been unsuccessful.");
+                }
+                expectingTeleportWithoutBaritone = false;
+            }
+        }
     }
 
     private void findTarget(){
@@ -122,6 +142,7 @@ public class Hunter extends Module {
 
             //if the current distance to the target player is greater than the nearest nation spawn's distance + 100, teleport to the nearest nation spawn
             if(Calculator.myDistanceToCoords(targetCoords.getAsJsonObject()) > shortestNationSpawnDistance + 100){
+                targetNationName = closestNationName;
                 info("Teleporting to " + closestNationName);
                 ChatUtils.sendPlayerMsg("/n spawn " + closestNationName);
             }
@@ -133,10 +154,16 @@ public class Hunter extends Module {
         }
         else if(useBaritone.get()){
             initialTeleportTime = timer;
-            expectingTeleport = true;
+            expectingTeleportWithBaritone = true;
+        } else if (autoTeleport.get()) {
+            expectingTeleportWithoutBaritone = true;
         }
         currentTarget = targetName;
 
+    }
+
+    private boolean wasTeleportSuccessful(){
+        //info(Data.nationSpawns.get(targetNationName).toString());
     }
 
 }
