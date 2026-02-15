@@ -1,6 +1,5 @@
 package com.stolengalaxy.earthmc_hud.modules;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.stolengalaxy.earthmc_hud.EarthMC_HUD;
 import com.stolengalaxy.earthmc_hud.utils.Calculator;
@@ -25,7 +24,8 @@ public class Hunter extends Module {
     private int initialTeleportTime = 0;
     private boolean expectingTeleportWithBaritone = false;
     private boolean expectingTeleportWithoutBaritone = false;
-    private String targetNationName = "";
+    private int initialDistanceToTarget = 0;
+    private JsonObject targetCoords = new JsonObject();
 
 
     public Hunter(){
@@ -104,7 +104,6 @@ public class Hunter extends Module {
                 }else if(chatNotifications.get()){
                     info("Teleport appears to have been unsuccessful. Cancelling Baritone.");
                 }
-                
                 expectingTeleportWithBaritone = false;
             } else if (expectingTeleportWithoutBaritone) {
                 if(!wasTeleportSuccessful()){
@@ -116,11 +115,10 @@ public class Hunter extends Module {
     }
 
     private void findTarget(){
-        System.out.println("finding target");
+        System.out.println("Finding target");
         int shortestNationSpawnDistance = 9999999;
         String closestNationName = "";
         String targetName = "";
-        JsonElement targetCoords = new JsonObject();
 
         for(String playerName : Calculator.findOutOfTownPlayers()){
             JsonObject nearestSpawnObject = Calculator.nearestSpawn(playerName);
@@ -133,16 +131,16 @@ public class Hunter extends Module {
                 closestNationName = nearestSpawnObject.get("name").getAsString();
             }
         }
+        initialDistanceToTarget = Calculator.myDistanceToCoords(targetCoords);
+
         if(chatNotifications.get()){
             info("New target: " + targetName + "\nCoordinates: (" + targetCoords.getAsJsonObject().get("x")
                 + ", "  + targetCoords.getAsJsonObject().get("z") + ")" + "\nNearest nation spawn: "
                 + closestNationName + " (" + shortestNationSpawnDistance + " blocks)");
         }
         if(autoTeleport.get()){
-
             //if the current distance to the target player is greater than the nearest nation spawn's distance + 100, teleport to the nearest nation spawn
             if(Calculator.myDistanceToCoords(targetCoords.getAsJsonObject()) > shortestNationSpawnDistance + 100){
-                targetNationName = closestNationName;
                 info("Teleporting to " + closestNationName);
                 ChatUtils.sendPlayerMsg("/n spawn " + closestNationName);
             }
@@ -159,11 +157,13 @@ public class Hunter extends Module {
             expectingTeleportWithoutBaritone = true;
         }
         currentTarget = targetName;
-
     }
 
     private boolean wasTeleportSuccessful(){
-        //info(Data.nationSpawns.get(targetNationName).toString());
+        if(Calculator.myDistanceToCoords(targetCoords) <= initialDistanceToTarget - 100){
+            return true;
+        }else{
+            return false;
+        }
     }
-
 }
