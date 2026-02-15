@@ -34,12 +34,22 @@ public class Hunter extends Module {
 
     private final SettingGroup generalSettings = settings.getDefaultGroup();
 
-    private final Setting<Boolean> autoHunt = generalSettings.add(new BoolSetting.Builder()
-        .name("Auto Hunt (READ DESCRIPTION!)")
-        .description("Uses Baritone to automatically go to target player\nWARNING: Ensure you have Baritone installed or it will send a chat message!")
+    public final SettingGroup autoHuntSettings = settings.createGroup("Auto Hunting");
+
+    private final Setting<Boolean> autoTeleport = autoHuntSettings.add(new BoolSetting.Builder()
+        .name("Auto Teleport")
+        .description("Uses /n spawn to teleport to the nearest nation spawn to the target player\n (As long as the teleport would take the player more than 100 blocks closer to the target than currently)")
+        .defaultValue(true)
+        .build()
+    );
+
+    private final Setting<Boolean> useBaritone = autoHuntSettings.add(new BoolSetting.Builder()
+        .name("Use Baritone (READ DESCRIPTION!)")
+        .description("Attempts to use Baritone to move towards the target\nWARNING: Ensure you have Baritone enabled with a # prefix or the commands will be sent in chat!")
         .defaultValue(false)
         .build()
     );
+
     private final Setting<Integer> targetRefreshTime = generalSettings.add(new IntSetting.Builder()
         .name("Target Refresh")
         .description("How often to refresh targets (ticks)")
@@ -108,15 +118,20 @@ public class Hunter extends Module {
                 + ", "  + targetCoords.getAsJsonObject().get("z") + ")" + "\nNearest nation spawn: "
                 + closestNationName + " (" + shortestNationSpawnDistance + " blocks)");
         }
-        if(autoHunt.get()){
+        if(autoTeleport.get()){
 
             //if the current distance to the target player is greater than the nearest nation spawn's distance + 100, teleport to the nearest nation spawn
             if(Calculator.myDistanceToCoords(targetCoords.getAsJsonObject()) > shortestNationSpawnDistance + 100){
                 info("Teleporting to " + closestNationName);
                 ChatUtils.sendPlayerMsg("/n spawn " + closestNationName);
             }
-
-            baritoneCommand = "#goto " + targetCoords.getAsJsonObject().get("x") + " " + targetCoords.getAsJsonObject().get("z");
+        }
+        baritoneCommand = "#goto " + targetCoords.getAsJsonObject().get("x") + " " + targetCoords.getAsJsonObject().get("z");
+        if(useBaritone.get() && !autoTeleport.get()){
+            ChatUtils.sendPlayerMsg("#stop");
+            ChatUtils.sendPlayerMsg(baritoneCommand);
+        }
+        else if(useBaritone.get()){
             initialTeleportTime = timer;
             expectingTeleport = true;
         }
