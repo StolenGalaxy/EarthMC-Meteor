@@ -1,7 +1,7 @@
-package com.stolengalaxy.earthmc_hud.hud;
+package com.stolengalaxy.earthmc_meteor.hud;
 
-import com.stolengalaxy.earthmc_hud.EarthMC_HUD;
-import com.stolengalaxy.earthmc_hud.modules.Hunter;
+import com.stolengalaxy.earthmc_meteor.EarthMC_Meteor;
+import com.stolengalaxy.earthmc_meteor.modules.Hunter;
 import meteordevelopment.meteorclient.systems.hud.HudElement;
 import meteordevelopment.meteorclient.systems.hud.HudElementInfo;
 import meteordevelopment.meteorclient.systems.hud.HudRenderer;
@@ -9,7 +9,7 @@ import meteordevelopment.meteorclient.utils.render.color.Color;
 
 public class HunterDisplay extends HudElement {
 
-    public static final HudElementInfo<HunterDisplay> INFO = new HudElementInfo<>(EarthMC_HUD.HUD_GROUP, "Current Status", "Shows the current status of EarthMC HUD", HunterDisplay::new);
+    public static final HudElementInfo<HunterDisplay> INFO = new HudElementInfo<>(EarthMC_Meteor.HUD_GROUP, "Current Status", "Shows the current status of EarthMC HUD", HunterDisplay::new);
 
     public HunterDisplay(){
         super(INFO);

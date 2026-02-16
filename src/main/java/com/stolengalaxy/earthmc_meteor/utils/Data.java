@@ -1,4 +1,4 @@
-package com.stolengalaxy.earthmc_hud.utils;
+package com.stolengalaxy.earthmc_meteor.utils;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;

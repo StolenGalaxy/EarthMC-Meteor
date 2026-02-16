@@ -1,4 +1,4 @@
-package com.stolengalaxy.earthmc_hud.utils;
+package com.stolengalaxy.earthmc_meteor.utils;
 
 import java.net.URI;
 import java.net.http.HttpClient;

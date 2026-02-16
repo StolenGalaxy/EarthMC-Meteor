@@ -1,4 +1,4 @@
-package com.stolengalaxy.earthmc_hud.utils;
+package com.stolengalaxy.earthmc_meteor.utils;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 import net.minecraft.client.MinecraftClient;
 
-import com.stolengalaxy.earthmc_hud.utils.RefreshData.Town;
-import static com.stolengalaxy.earthmc_hud.utils.Data.townNames;
+import com.stolengalaxy.earthmc_meteor.utils.RefreshData.Town;
+import static com.stolengalaxy.earthmc_meteor.utils.Data.townNames;
 
 public class Calculator {
     public static Integer myDistanceToCoords(JsonObject coords){

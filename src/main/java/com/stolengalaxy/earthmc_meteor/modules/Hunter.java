@@ -1,9 +1,9 @@
-package com.stolengalaxy.earthmc_hud.modules;
+package com.stolengalaxy.earthmc_meteor.modules;
 
 import com.google.gson.JsonObject;
-import com.stolengalaxy.earthmc_hud.EarthMC_HUD;
-import com.stolengalaxy.earthmc_hud.utils.Calculator;
-import com.stolengalaxy.earthmc_hud.utils.Data;
+import com.stolengalaxy.earthmc_meteor.EarthMC_Meteor;
+import com.stolengalaxy.earthmc_meteor.utils.Calculator;
+import com.stolengalaxy.earthmc_meteor.utils.Data;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.IntSetting;
@@ -32,7 +32,7 @@ public class Hunter extends Module {
 
 
     public Hunter(){
-        super(EarthMC_HUD.EarthMC, "Hunter", "Finds optimal hunting targets");
+        super(EarthMC_Meteor.EarthMC, "Hunter", "Finds optimal hunting targets");
     }
 
     private final SettingGroup generalSettings = settings.getDefaultGroup();
@@ -125,7 +125,6 @@ public class Hunter extends Module {
 
         if(!currentTarget.isEmpty() && targetAvailable()){
             info("Target still available. Continuing.");
-            info(String.valueOf(targetInvisibleTicks));
             return;
         } else if (!targetAvailable() && chatNotifications.get()) {
             info("Target appears to have become unavailable.");

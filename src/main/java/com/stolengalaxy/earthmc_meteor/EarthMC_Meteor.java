@@ -1,16 +1,16 @@
-package com.stolengalaxy.earthmc_hud;
+package com.stolengalaxy.earthmc_meteor;
 
-import com.stolengalaxy.earthmc_hud.modules.Hunter;
-import com.stolengalaxy.earthmc_hud.utils.RefreshData;
+import com.stolengalaxy.earthmc_meteor.modules.Hunter;
+import com.stolengalaxy.earthmc_meteor.utils.RefreshData;
 import meteordevelopment.meteorclient.addons.GithubRepo;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
 import meteordevelopment.meteorclient.systems.hud.Hud;
 import meteordevelopment.meteorclient.systems.hud.HudGroup;
 import meteordevelopment.meteorclient.systems.modules.Category;
 import meteordevelopment.meteorclient.systems.modules.Modules;
-import com.stolengalaxy.earthmc_hud.hud.HunterDisplay;
+import com.stolengalaxy.earthmc_meteor.hud.HunterDisplay;
 
-public class EarthMC_HUD extends MeteorAddon {
+public class EarthMC_Meteor extends MeteorAddon {
     public static final Category EarthMC = new Category("EarthMC");
     public static final HudGroup HUD_GROUP = new HudGroup("EarthMC");
 
@@ -30,7 +30,7 @@ public class EarthMC_HUD extends MeteorAddon {
 
     @Override
     public String getPackage() {
-        return "com.stolengalaxy.earthmc_hud";
+        return "com.stolengalaxy.earthmc_meteor";
     }
 
     @Override

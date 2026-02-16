@@ -14,7 +14,7 @@
   "environment": "client",
   "entrypoints": {
     "meteor": [
-      "com.stolengalaxy.earthmc_hud.EarthMC_HUD"
+      "com.stolengalaxy.earthmc_meteor.EarthMC_Meteor"
     ]
   },
   "mixins": [],
