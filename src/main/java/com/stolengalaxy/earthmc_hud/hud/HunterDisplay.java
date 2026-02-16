@@ -17,13 +17,13 @@ public class HunterDisplay extends HudElement {
 
     @Override
     public void render(HudRenderer renderer){
-        setSize(renderer.textWidth("Optimal target: " + Hunter.currentTarget, true), renderer.textHeight(true));
+        setSize(renderer.textWidth("Current target: " + Hunter.currentTarget, true), renderer.textHeight(true));
 
         // Render background
         renderer.quad(x, y, getWidth(), getHeight(), Color.LIGHT_GRAY);
 
         // Render text
-        renderer.text("Optimal target: " + Hunter.currentTarget, x, y, Color.RED, true);
+        renderer.text("Current target: " + Hunter.currentTarget, x, y, Color.RED, true);
     }
 
 

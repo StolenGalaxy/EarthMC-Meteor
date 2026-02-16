@@ -51,10 +51,11 @@ public class Calculator {
 
         JsonArray nearbyTowns = new JsonArray();
         townNames.forEach(townName -> {
-            if(playerCoords.get("x").getAsInt() >= towns.get(townName).extrema().get(1)){
-                if(playerCoords.get("x").getAsInt() <= towns.get(townName).extrema().get(0)){
-                    if(playerCoords.get("z").getAsInt() >= towns.get(townName).extrema().get(3)){
-                        if(playerCoords.get("z").getAsInt() <= towns.get(townName).extrema().get(2)){
+            List<Integer> townExtrema = towns.get(townName).extrema();
+            if(playerCoords.get("x").getAsInt() >= townExtrema.get(1)){
+                if(playerCoords.get("x").getAsInt() <= townExtrema.get(0)){
+                    if(playerCoords.get("z").getAsInt() >= townExtrema.get(3)){
+                        if(playerCoords.get("z").getAsInt() <= townExtrema.get(2)){
                             nearbyTowns.add(townName);
                         }
                     }
