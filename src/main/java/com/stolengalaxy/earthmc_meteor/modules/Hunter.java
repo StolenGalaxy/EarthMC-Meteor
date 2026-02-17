@@ -31,6 +31,7 @@ public class Hunter extends Module {
     public static String currentTarget = "";
 
     private int targetInvisibleTicks = 0;
+    private boolean teleportUnnecessary = false;
 
 
     public Hunter(){
@@ -125,6 +126,7 @@ public class Hunter extends Module {
     }
 
     private void findTarget(){
+        teleportUnnecessary = false;
         if(!currentTarget.isEmpty() && targetAvailable()){
             info("Target still available. Continuing.");
             return;
@@ -171,18 +173,24 @@ public class Hunter extends Module {
             if(Calculator.myDistanceToCoords(targetCoords.getAsJsonObject()) > shortestNationSpawnDistance + 100){
                 info("Teleporting to " + closestNationName);
                 ChatUtils.sendPlayerMsg("/n spawn " + closestNationName);
+            }else{
+                teleportUnnecessary = true;
             }
+
         }
         baritoneCommand = "#goto " + targetCoords.getAsJsonObject().get("x") + " " + targetCoords.getAsJsonObject().get("z");
         if(useBaritone.get() && !autoTeleport.get()){
             ChatUtils.sendPlayerMsg("#stop");
             ChatUtils.sendPlayerMsg(baritoneCommand);
         }
-        else if(useBaritone.get()){
+        else if(useBaritone.get() && !teleportUnnecessary){
             initialTeleportTime = timer;
             expectingTeleportWithBaritone = true;
-        } else if (autoTeleport.get()) {
+        } else if (autoTeleport.get() && !teleportUnnecessary) {
             expectingTeleportWithoutBaritone = true;
+        } else if (teleportUnnecessary && useBaritone.get()) {
+            ChatUtils.sendPlayerMsg("#stop");
+            ChatUtils.sendPlayerMsg(baritoneCommand);
         }
         currentTarget = targetName;
     }
