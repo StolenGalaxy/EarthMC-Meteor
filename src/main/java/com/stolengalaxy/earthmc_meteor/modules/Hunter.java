@@ -13,6 +13,8 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
 import meteordevelopment.orbit.EventHandler;
 
+import java.util.List;
+
 public class Hunter extends Module {
     private int timer = 0;
     private boolean initialActivation = false;
@@ -137,8 +139,15 @@ public class Hunter extends Module {
         String closestNationName = "";
         String targetName = "";
 
+        List<String> availablePlayers = Calculator.findOutOfTownPlayers();
+        if (availablePlayers.isEmpty()){
+            if(chatNotifications.get()){
+                info("No targets found.");
+                return;
+            }
+        }
 
-        for(String playerName : Calculator.findOutOfTownPlayers()){
+        for(String playerName : availablePlayers){
             JsonObject nearestSpawnObject = Calculator.nearestSpawn(playerName);
             int distance = nearestSpawnObject.get("distance").getAsInt();
 
