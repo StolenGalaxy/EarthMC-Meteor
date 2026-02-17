@@ -48,8 +48,6 @@ public class Calculator {
 
     public static JsonArray getNearbyTowns(String playerName){
         Map<String, Town> towns = Data.towns;
-        System.out.println(playerName);
-        System.out.println(visiblePlayers);
         JsonObject playerCoords = Data.visiblePlayers.get(playerName).getAsJsonObject();
 
         JsonArray nearbyTowns = new JsonArray();
@@ -93,6 +91,9 @@ public class Calculator {
 
         List<String> playersOutOfTowns = new ArrayList<>();
         visiblePlayerNames.forEach(name -> {
+            if(!visiblePlayers.keySet().contains(name)){
+                return;
+            }
             if(!isPlayerInAnyTown(name)){
                 playersOutOfTowns.add(name);
             }
