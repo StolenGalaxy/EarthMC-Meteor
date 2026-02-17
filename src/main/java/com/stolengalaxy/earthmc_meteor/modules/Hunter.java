@@ -57,9 +57,9 @@ public class Hunter extends Module {
     private final Setting<Integer> targetRefreshTime = generalSettings.add(new IntSetting.Builder()
         .name("Target Refresh")
         .description("How often to refresh targets (ticks)")
-        .defaultValue(2000)
-        .min(1000)
-        .sliderRange(1000, 36000)
+        .defaultValue(400)
+        .min(400)
+        .sliderRange(400, 6000)
         .build()
     );
     private final Setting<Boolean> chatNotifications = generalSettings.add(new BoolSetting.Builder()
@@ -106,11 +106,13 @@ public class Hunter extends Module {
                     info("Teleport appears to have been unsuccessful. Cancelling Baritone.");
                 }
                 expectingTeleportWithBaritone = false;
+                currentTarget = "";
             } else if (expectingTeleportWithoutBaritone) {
                 if(!wasTeleportSuccessful()){
                     info("Teleport appears to have been unsuccessful.");
                 }
                 expectingTeleportWithoutBaritone = false;
+                currentTarget = "";
             }
         }
 
@@ -123,8 +125,6 @@ public class Hunter extends Module {
     }
 
     private void findTarget(){
-        System.out.println("Finding target");
-
         if(!currentTarget.isEmpty() && targetAvailable()){
             info("Target still available. Continuing.");
             return;
