@@ -49,12 +49,18 @@ public class RefreshData {
             .thenAccept(json -> {
                 JsonObject players = new JsonObject();
                 List<String> visiblePlayerNames = new ArrayList<>();
-
                 JsonArray playersArray = json.getAsJsonObject().get("players").getAsJsonArray();
+
+                String ownUsername = Calculator.getOwnUsername();
                 playersArray.forEach(player -> {
                     JsonObject playerObject = player.getAsJsonObject();
 
                     String playerName = playerObject.get("name").getAsString();
+
+                    if(playerName.equals(ownUsername)){
+                        return;
+                    }
+
                     JsonObject playerCoords = new JsonObject();
                     playerCoords.add("x", playerObject.get("x"));
                     playerCoords.add("y", playerObject.get("y"));

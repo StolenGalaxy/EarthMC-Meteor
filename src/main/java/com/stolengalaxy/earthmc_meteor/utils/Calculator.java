@@ -14,6 +14,11 @@ import static com.stolengalaxy.earthmc_meteor.utils.Data.townNames;
 import static com.stolengalaxy.earthmc_meteor.utils.Data.visiblePlayers;
 
 public class Calculator {
+    public static String getOwnUsername(){
+        MinecraftClient client = MinecraftClient.getInstance();
+        return client.getSession().getUsername();
+    }
+
     public static Integer myDistanceToCoords(JsonObject coords){
         MinecraftClient client = MinecraftClient.getInstance();
         int xDistance = 0;
