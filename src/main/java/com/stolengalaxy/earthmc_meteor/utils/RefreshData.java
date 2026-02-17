@@ -49,12 +49,18 @@ public class RefreshData {
             .thenAccept(json -> {
                 JsonObject players = new JsonObject();
                 List<String> visiblePlayerNames = new ArrayList<>();
-
                 JsonArray playersArray = json.getAsJsonObject().get("players").getAsJsonArray();
+
+                String ownUsername = Calculator.getOwnUsername();
                 playersArray.forEach(player -> {
                     JsonObject playerObject = player.getAsJsonObject();
 
                     String playerName = playerObject.get("name").getAsString();
+
+                    if(playerName.equals(ownUsername)){
+                        return;
+                    }
+
                     JsonObject playerCoords = new JsonObject();
                     playerCoords.add("x", playerObject.get("x"));
                     playerCoords.add("y", playerObject.get("y"));
@@ -89,7 +95,16 @@ public class RefreshData {
                     JsonObject town_object = town_element.getAsJsonObject();
                     if(town_object.toString().contains("points")){
                         String townName = town_object.get("tooltip").getAsString().split("<b>")[1].split("</b>")[0].strip();
-                        JsonArray points = town_object.get("points").getAsJsonArray().get(0).getAsJsonArray().get(0).getAsJsonArray();
+                        JsonArray points = new JsonArray();
+
+                        town_object.get("points").getAsJsonArray().forEach(pointsGroup ->{
+                            JsonArray pointsSubset = pointsGroup.getAsJsonArray().get(0).getAsJsonArray();
+                            pointsSubset.forEach(point -> {
+                                points.add(point.getAsJsonObject());
+                            });
+                        });
+
+                        //JsonArray points = .get(0).getAsJsonArray().get(0).getAsJsonArray();
 
                         int max_x = points.get(0).getAsJsonObject().get("x").getAsInt();
                         int max_z = points.get(0).getAsJsonObject().get("z").getAsInt();

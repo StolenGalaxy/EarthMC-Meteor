@@ -13,6 +13,8 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
 import meteordevelopment.orbit.EventHandler;
 
+import java.util.List;
+
 public class Hunter extends Module {
     private int timer = 0;
     private boolean initialActivation = false;
@@ -29,6 +31,7 @@ public class Hunter extends Module {
     public static String currentTarget = "";
 
     private int targetInvisibleTicks = 0;
+    private boolean teleportUnnecessary = false;
 
 
     public Hunter(){
@@ -55,9 +58,9 @@ public class Hunter extends Module {
     private final Setting<Integer> targetRefreshTime = generalSettings.add(new IntSetting.Builder()
         .name("Target Refresh")
         .description("How often to refresh targets (ticks)")
-        .defaultValue(2000)
-        .min(1000)
-        .sliderRange(1000, 36000)
+        .defaultValue(400)
+        .min(400)
+        .sliderRange(400, 6000)
         .build()
     );
     private final Setting<Boolean> chatNotifications = generalSettings.add(new BoolSetting.Builder()
@@ -104,11 +107,13 @@ public class Hunter extends Module {
                     info("Teleport appears to have been unsuccessful. Cancelling Baritone.");
                 }
                 expectingTeleportWithBaritone = false;
+                currentTarget = "";
             } else if (expectingTeleportWithoutBaritone) {
                 if(!wasTeleportSuccessful()){
                     info("Teleport appears to have been unsuccessful.");
                 }
                 expectingTeleportWithoutBaritone = false;
+                currentTarget = "";
             }
         }
 
@@ -121,8 +126,7 @@ public class Hunter extends Module {
     }
 
     private void findTarget(){
-        System.out.println("Finding target");
-
+        teleportUnnecessary = false;
         if(!currentTarget.isEmpty() && targetAvailable()){
             info("Target still available. Continuing.");
             return;
@@ -137,8 +141,15 @@ public class Hunter extends Module {
         String closestNationName = "";
         String targetName = "";
 
+        List<String> availablePlayers = Calculator.findOutOfTownPlayers();
+        if (availablePlayers.isEmpty()){
+            if(chatNotifications.get()){
+                info("No targets found.");
+                return;
+            }
+        }
 
-        for(String playerName : Calculator.findOutOfTownPlayers()){
+        for(String playerName : availablePlayers){
             JsonObject nearestSpawnObject = Calculator.nearestSpawn(playerName);
             int distance = nearestSpawnObject.get("distance").getAsInt();
 
@@ -162,18 +173,24 @@ public class Hunter extends Module {
             if(Calculator.myDistanceToCoords(targetCoords.getAsJsonObject()) > shortestNationSpawnDistance + 100){
                 info("Teleporting to " + closestNationName);
                 ChatUtils.sendPlayerMsg("/n spawn " + closestNationName);
+            }else{
+                teleportUnnecessary = true;
             }
+
         }
         baritoneCommand = "#goto " + targetCoords.getAsJsonObject().get("x") + " " + targetCoords.getAsJsonObject().get("z");
         if(useBaritone.get() && !autoTeleport.get()){
             ChatUtils.sendPlayerMsg("#stop");
             ChatUtils.sendPlayerMsg(baritoneCommand);
         }
-        else if(useBaritone.get()){
+        else if(useBaritone.get() && !teleportUnnecessary){
             initialTeleportTime = timer;
             expectingTeleportWithBaritone = true;
-        } else if (autoTeleport.get()) {
+        } else if (autoTeleport.get() && !teleportUnnecessary) {
             expectingTeleportWithoutBaritone = true;
+        } else if (teleportUnnecessary && useBaritone.get()) {
+            ChatUtils.sendPlayerMsg("#stop");
+            ChatUtils.sendPlayerMsg(baritoneCommand);
         }
         currentTarget = targetName;
     }

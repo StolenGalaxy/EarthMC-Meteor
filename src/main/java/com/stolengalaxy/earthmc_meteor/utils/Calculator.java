@@ -11,8 +11,14 @@ import net.minecraft.client.MinecraftClient;
 
 import com.stolengalaxy.earthmc_meteor.utils.RefreshData.Town;
 import static com.stolengalaxy.earthmc_meteor.utils.Data.townNames;
+import static com.stolengalaxy.earthmc_meteor.utils.Data.visiblePlayers;
 
 public class Calculator {
+    public static String getOwnUsername(){
+        MinecraftClient client = MinecraftClient.getInstance();
+        return client.getSession().getUsername();
+    }
+
     public static Integer myDistanceToCoords(JsonObject coords){
         MinecraftClient client = MinecraftClient.getInstance();
         int xDistance = 0;
@@ -37,7 +43,7 @@ public class Calculator {
             });
 
             boolean contains = townShape.contains(playerCoords.get("x").getAsInt(), playerCoords.get("z").getAsInt());
-
+            System.out.println("does " + townName + " contain player " + playerName + ": " + contains);
             return contains;
         }else {
             return false;
@@ -50,12 +56,19 @@ public class Calculator {
         JsonObject playerCoords = Data.visiblePlayers.get(playerName).getAsJsonObject();
 
         JsonArray nearbyTowns = new JsonArray();
+        //System.out.println("Finding towns nearby to " + playerName);
         townNames.forEach(townName -> {
+
             List<Integer> townExtrema = towns.get(townName).extrema();
             if(playerCoords.get("x").getAsInt() >= townExtrema.get(1)){
+                //System.out.println("Player x " + playerCoords.get("x") + " greater than town min x " + townExtrema.get(1));
                 if(playerCoords.get("x").getAsInt() <= townExtrema.get(0)){
+                    //System.out.println("Player x " + playerCoords.get("x") + " less than town max x " + townExtrema.get(0));
                     if(playerCoords.get("z").getAsInt() >= townExtrema.get(3)){
+                        //System.out.println("Player z " + playerCoords.get("z") + " greater than town min z " + townExtrema.get(3));
                         if(playerCoords.get("z").getAsInt() <= townExtrema.get(2)){
+                            //System.out.println("Player z " + playerCoords.get("z") + " less than town max z " + townExtrema.get(2));
+                            //System.out.println(townName + " is a nearby town");
                             nearbyTowns.add(townName);
                         }
                     }
@@ -83,6 +96,9 @@ public class Calculator {
 
         List<String> playersOutOfTowns = new ArrayList<>();
         visiblePlayerNames.forEach(name -> {
+            if(!visiblePlayers.keySet().contains(name)){
+                return;
+            }
             if(!isPlayerInAnyTown(name)){
                 playersOutOfTowns.add(name);
             }
