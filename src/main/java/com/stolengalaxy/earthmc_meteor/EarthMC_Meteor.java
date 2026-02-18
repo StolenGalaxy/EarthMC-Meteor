@@ -21,14 +21,13 @@ public class EarthMC_Meteor extends MeteorAddon {
     @Override
     public void onInitialize() {
         RefreshData.init();
+        FileHandling.ensureFileExists("players_blacklist.txt");
 
         Modules.get().add(new Hunter());
 
         Hud.get().register(HunterDisplay.INFO);
 
         Commands.add(new BlacklistPlayerCommand());
-
-        FileHandling.ensureFileExists("players_blacklist.txt");
     }
 
     @Override
