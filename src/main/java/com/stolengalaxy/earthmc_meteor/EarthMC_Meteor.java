@@ -1,9 +1,11 @@
 package com.stolengalaxy.earthmc_meteor;
 
+import com.stolengalaxy.earthmc_meteor.commands.BlacklistPlayerCommand;
 import com.stolengalaxy.earthmc_meteor.modules.Hunter;
 import com.stolengalaxy.earthmc_meteor.utils.RefreshData;
 import meteordevelopment.meteorclient.addons.GithubRepo;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
+import meteordevelopment.meteorclient.commands.Commands;
 import meteordevelopment.meteorclient.systems.hud.Hud;
 import meteordevelopment.meteorclient.systems.hud.HudGroup;
 import meteordevelopment.meteorclient.systems.modules.Category;
@@ -16,11 +18,13 @@ public class EarthMC_Meteor extends MeteorAddon {
 
     @Override
     public void onInitialize() {
-
-        Modules.get().add(new Hunter());
         RefreshData.init();
 
+        Modules.get().add(new Hunter());
+
         Hud.get().register(HunterDisplay.INFO);
+
+        Commands.add(new BlacklistPlayerCommand());
     }
 
     @Override
