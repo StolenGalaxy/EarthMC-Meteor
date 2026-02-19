@@ -19,13 +19,14 @@ public class BlacklistPlayerCommand extends Command {
             .then(argument("username", StringArgumentType.string()).executes(context -> {
                 String playerName = StringArgumentType.getString(context, "username").strip();
 
-                List<String> currentList = Blacklist.getPlayerBlacklist();
+                List<String> currentList = Blacklist.getBlacklist("player");
 
                 if(currentList.contains(playerName)){
-                    info(playerName + " is already blacklisted!");
+                    info(playerName + " is already a blacklisted player!");
                 }else{
-                    Blacklist.blacklistPlayer(playerName);
-                    info("Added " + playerName + " to blacklist");
+                    Blacklist.blacklist("player", playerName);
+
+                    info("Added " + playerName + " to player blacklist");
                 }
                 return SINGLE_SUCCESS;
             }))
@@ -35,12 +36,12 @@ public class BlacklistPlayerCommand extends Command {
             .then(argument("username", StringArgumentType.string()).executes(context -> {
                 String playerName = StringArgumentType.getString(context, "username").strip();
 
-                List<String> currentList = Blacklist.getPlayerBlacklist();
+                List<String> currentList = Blacklist.getBlacklist("player");
                 if(currentList.contains(playerName)){
-                    Blacklist.unBlacklistPlayer(playerName);
-                    info("Removed " + playerName + " from blacklist");
+                    Blacklist.unBlacklist("player", playerName);
+                    info("Removed " + playerName + " from player blacklist");
                 } else{
-                    info("Couldn't find " + playerName + " in blacklist!");
+                    info("Couldn't find " + playerName + " in player blacklist!");
                 }
 
                 return SINGLE_SUCCESS;
@@ -48,12 +49,15 @@ public class BlacklistPlayerCommand extends Command {
         );
 
         builder.then(literal("list").executes(context -> {
-            List<String> blacklistedPlayers = Blacklist.getPlayerBlacklist();
+            List<String> blacklistedPlayers = Blacklist.getBlacklist("player");
 
             int index = 1;
             for(String playerName:blacklistedPlayers){
                 info("Blacklisted player #" + index + ": " + playerName);
                 index++;
+            }
+            if(index == 1){
+                info("Player blacklist is empty!");
             }
             return SINGLE_SUCCESS;
         }));

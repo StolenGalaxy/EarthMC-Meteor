@@ -2,19 +2,34 @@ package com.stolengalaxy.earthmc_meteor.utils;
 import java.util.List;
 
 public class Blacklist {
-    public static void blacklistPlayer(String username){
-        FileHandling.addLine("players_blacklist.txt", username);
-        System.out.println("Added " + username + " to player blacklist");
+    public static void blacklist(String type, String name){
+        FileHandling.addLine(type + "_blacklist.txt", name);
+        System.out.println("Added " + name + " to " + type + " blacklist");
 
-        Data.currentPlayerBlacklist = getPlayerBlacklist();
-    }
-    public static void unBlacklistPlayer(String username){
-        FileHandling.removeTextFromFile("players_blacklist.txt", username);
-        System.out.println("Removed " + username + " from player blacklist");
+        if(type.equals("player")){
+            Data.currentPlayerBlacklist = getBlacklist("player");
+            RefreshData.refreshPlayerData();
+        } else{
+            Data.currentNationBlacklist = getBlacklist("nation");
+            RefreshData.refreshTownData();
+        }
 
-        Data.currentPlayerBlacklist = getPlayerBlacklist();
     }
-    public static List<String> getPlayerBlacklist(){
-        return FileHandling.readLines("players_blacklist.txt");
+
+    public static void unBlacklist(String type, String name){
+        FileHandling.removeTextFromFile(type + "_blacklist.txt", name);
+        System.out.println("Removed " + name + " from " + type + " blacklist");
+
+        if(type.equals("player")){
+            Data.currentPlayerBlacklist = getBlacklist("player");
+            RefreshData.refreshPlayerData();
+        } else{
+            Data.currentNationBlacklist = getBlacklist("nation");
+            RefreshData.refreshTownData();
+        }
     }
+    public static List<String> getBlacklist(String type){
+        return FileHandling.readLines(type + "_blacklist.txt");
+    }
+
 }

@@ -42,7 +42,7 @@ public class RefreshData {
 
     }
 
-    private static void refreshPlayerData(){
+    public static void refreshPlayerData(){
         System.out.println("Refreshing player data");
 
         Requests.getJson("https://map.earthmc.net/tiles/players.json")
@@ -81,7 +81,7 @@ public class RefreshData {
 
     }
 
-    private static void refreshTownData(){
+    public static void refreshTownData(){
         System.out.println("Refreshing town data");
 
         Requests.getJson("https://map.earthmc.net/tiles/minecraft_overworld/markers.json")
@@ -139,8 +139,10 @@ public class RefreshData {
 
                     } else if (town_object.toString().contains("point")) {
                         String nationName = town_object.get("tooltip").getAsString().split("<b>")[1].split("</b>")[0].strip();
-                        JsonObject spawnPoint = town_object.get("point").getAsJsonObject();
-                        nationSpawns.add(nationName, spawnPoint);
+                        if(!Data.currentNationBlacklist.contains(nationName)){
+                            JsonObject spawnPoint = town_object.get("point").getAsJsonObject();
+                            nationSpawns.add(nationName, spawnPoint);
+                        }
 
                     }
 

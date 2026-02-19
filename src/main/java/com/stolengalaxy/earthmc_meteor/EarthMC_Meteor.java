@@ -1,8 +1,8 @@
 package com.stolengalaxy.earthmc_meteor;
 
+import com.stolengalaxy.earthmc_meteor.commands.BlacklistNationCommand;
 import com.stolengalaxy.earthmc_meteor.commands.BlacklistPlayerCommand;
 import com.stolengalaxy.earthmc_meteor.modules.Hunter;
-import com.stolengalaxy.earthmc_meteor.utils.Blacklist;
 import com.stolengalaxy.earthmc_meteor.utils.FileHandling;
 import com.stolengalaxy.earthmc_meteor.utils.RefreshData;
 import meteordevelopment.meteorclient.addons.GithubRepo;
@@ -21,13 +21,15 @@ public class EarthMC_Meteor extends MeteorAddon {
     @Override
     public void onInitialize() {
         RefreshData.init();
-        FileHandling.ensureFileExists("players_blacklist.txt");
+        FileHandling.ensureFileExists("player_blacklist.txt");
+        FileHandling.ensureFileExists("nation_blacklist.txt");
 
         Modules.get().add(new Hunter());
 
         Hud.get().register(HunterDisplay.INFO);
 
         Commands.add(new BlacklistPlayerCommand());
+        Commands.add(new BlacklistNationCommand());
     }
 
     @Override
