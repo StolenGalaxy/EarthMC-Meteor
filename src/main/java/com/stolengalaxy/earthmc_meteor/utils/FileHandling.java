@@ -77,8 +77,11 @@ public class FileHandling {
             BufferedReader reader = new BufferedReader(new FileReader(filename));
             String line;
             while((line = reader.readLine()) != null){
-                lines.add(line);
+                if(!line.isEmpty()){
+                    lines.add(line);
+                }
             }
+            reader.close();
         } catch(IOException error){
             error.printStackTrace();
         }

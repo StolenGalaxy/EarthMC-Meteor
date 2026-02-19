@@ -17,17 +17,31 @@ public class BlacklistPlayerCommand extends Command {
     public void build(LiteralArgumentBuilder<CommandSource> builder){
         builder.then(literal("add")
             .then(argument("username", StringArgumentType.string()).executes(context -> {
-                String playerName = StringArgumentType.getString(context, "username");
-                Blacklist.blacklistPlayer(playerName);
+                String playerName = StringArgumentType.getString(context, "username").strip();
 
+                List<String> currentList = Blacklist.getPlayerBlacklist();
+
+                if(currentList.contains(playerName)){
+                    info(playerName + " is already blacklisted!");
+                }else{
+                    Blacklist.blacklistPlayer(playerName);
+                    info("Added " + playerName + " to blacklist");
+                }
                 return SINGLE_SUCCESS;
             }))
         );
 
         builder.then(literal("remove")
             .then(argument("username", StringArgumentType.string()).executes(context -> {
-                String playerName = StringArgumentType.getString(context, "username");
-                Blacklist.unBlacklistPlayer(playerName);
+                String playerName = StringArgumentType.getString(context, "username").strip();
+
+                List<String> currentList = Blacklist.getPlayerBlacklist();
+                if(currentList.contains(playerName)){
+                    Blacklist.unBlacklistPlayer(playerName);
+                    info("Removed " + playerName + " from blacklist");
+                } else{
+                    info("Couldn't find " + playerName + " in blacklist!");
+                }
 
                 return SINGLE_SUCCESS;
             }))
@@ -36,10 +50,11 @@ public class BlacklistPlayerCommand extends Command {
         builder.then(literal("list").executes(context -> {
             List<String> blacklistedPlayers = Blacklist.getPlayerBlacklist();
 
-            blacklistedPlayers.forEach(playerName -> {
-                info("Blacklisted player: " + playerName);
-            });
-
+            int index = 1;
+            for(String playerName:blacklistedPlayers){
+                info("Blacklisted player #" + index + ": " + playerName);
+                index++;
+            }
             return SINGLE_SUCCESS;
         }));
 
