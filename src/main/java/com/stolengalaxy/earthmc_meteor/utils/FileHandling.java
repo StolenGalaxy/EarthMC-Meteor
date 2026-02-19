@@ -1,6 +1,8 @@
 package com.stolengalaxy.earthmc_meteor.utils;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class FileHandling {
@@ -69,4 +71,18 @@ public class FileHandling {
         }
     }
 
+    public static List<String> readLines(String filename){
+        List<String> lines = new ArrayList<>();
+        try{
+            BufferedReader reader = new BufferedReader(new FileReader(filename));
+            String line;
+            while((line = reader.readLine()) != null){
+                lines.add(line);
+            }
+        } catch(IOException error){
+            error.printStackTrace();
+        }
+        return lines;
+
+    }
 }
