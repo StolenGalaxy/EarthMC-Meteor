@@ -18,5 +18,6 @@ public class Data {
     public static boolean playersInitialised = false;
     public static boolean townsInitialised = false;
 
+    public static List<String> currentPlayerBlacklist = new ArrayList<>();
 
 }

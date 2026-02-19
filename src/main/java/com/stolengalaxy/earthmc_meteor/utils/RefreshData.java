@@ -57,7 +57,7 @@ public class RefreshData {
 
                     String playerName = playerObject.get("name").getAsString();
 
-                    if(playerName.equals(ownUsername)){
+                    if(playerName.equals(ownUsername) || Data.currentPlayerBlacklist.contains(playerName)){
                         return;
                     }
 

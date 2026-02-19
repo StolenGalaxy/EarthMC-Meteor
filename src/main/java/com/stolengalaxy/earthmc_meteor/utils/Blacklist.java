@@ -3,13 +3,16 @@ import java.util.List;
 
 public class Blacklist {
     public static void blacklistPlayer(String username){
+        FileHandling.addLine("players_blacklist.txt", username);
         System.out.println("Added " + username + " to player blacklist");
 
-        FileHandling.addLine("players_blacklist.txt", username);
+        Data.currentPlayerBlacklist = getPlayerBlacklist();
     }
     public static void unBlacklistPlayer(String username){
-        System.out.println("Removed " + username + " from player blacklist");
         FileHandling.removeTextFromFile("players_blacklist.txt", username);
+        System.out.println("Removed " + username + " from player blacklist");
+
+        Data.currentPlayerBlacklist = getPlayerBlacklist();
     }
     public static List<String> getPlayerBlacklist(){
         return FileHandling.readLines("players_blacklist.txt");
