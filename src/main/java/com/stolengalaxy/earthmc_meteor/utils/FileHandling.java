@@ -1,6 +1,7 @@
 package com.stolengalaxy.earthmc_meteor.utils;
 
 import java.io.*;
+import java.util.Random;
 
 public class FileHandling {
     public static void ensureFileExists(String filename){
@@ -19,29 +20,53 @@ public class FileHandling {
 
     public static void addLine(String filename, String lineText){
         try{
-            FileWriter writer = new FileWriter(filename);
-            writer.append(lineText);
+            FileWriter writer = new FileWriter(filename, true);
+            writer.write("\n" + lineText);
             writer.close();
         } catch (IOException error) {
             error.printStackTrace();
         }
     }
 
-    public static int findLineIndexOfText(String filename, String text){
-        int lineIndex = 0;
+    public static void deleteFile(String filename){
+        File file = new File(filename);
+        if(file.delete()){
+            System.out.println("Deleted " + filename);
+        } else{
+            System.out.println("Unable to delete " + filename);
+        }
+    }
+
+    public static void renameFile(String currentName, String newName){
+        File currrentFile = new File(currentName);
+        File newFile = new File(newName);
+
+         if (currrentFile.renameTo(newFile)){
+             System.out.println("Renamed " + currentName + " to " + newName);
+         } else{
+             System.out.println("Unable to rename " + currentName + " to " + newName);
+         }
+    }
+
+
+    public static void removeTextFromFile(String filename, String text){
+        Random rand = new Random();
+        String tempFileName = "temp" + rand.nextInt(99999999) + filename;
+        ensureFileExists(tempFileName);
         try(BufferedReader reader = new BufferedReader(new FileReader(filename))){
             String line;
 
             while((line = reader.readLine()) != null){
-                if(line.strip().equals(text)){
-                    break;
+                if(!line.strip().equals(text)){
+                    addLine(tempFileName, line);
                 }
-                lineIndex++;
             }
-            return lineIndex;
+            reader.close();
+            deleteFile(filename);
+            renameFile(tempFileName, filename);
         } catch (IOException error){
             error.printStackTrace();
         }
-        return lineIndex;
     }
+
 }
