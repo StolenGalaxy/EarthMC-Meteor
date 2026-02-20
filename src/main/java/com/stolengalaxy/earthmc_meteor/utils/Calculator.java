@@ -43,7 +43,6 @@ public class Calculator {
             });
 
             boolean contains = townShape.contains(playerCoords.get("x").getAsInt(), playerCoords.get("z").getAsInt());
-            System.out.println("does " + townName + " contain player " + playerName + ": " + contains);
             return contains;
         }else {
             return false;

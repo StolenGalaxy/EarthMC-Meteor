@@ -1,9 +1,15 @@
 package com.stolengalaxy.earthmc_meteor;
 
+import com.stolengalaxy.earthmc_meteor.commands.BlacklistNationCommand;
+import com.stolengalaxy.earthmc_meteor.commands.BlacklistPlayerCommand;
 import com.stolengalaxy.earthmc_meteor.modules.Hunter;
+import com.stolengalaxy.earthmc_meteor.utils.Blacklist;
+import com.stolengalaxy.earthmc_meteor.utils.Data;
+import com.stolengalaxy.earthmc_meteor.utils.FileHandling;
 import com.stolengalaxy.earthmc_meteor.utils.RefreshData;
 import meteordevelopment.meteorclient.addons.GithubRepo;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
+import meteordevelopment.meteorclient.commands.Commands;
 import meteordevelopment.meteorclient.systems.hud.Hud;
 import meteordevelopment.meteorclient.systems.hud.HudGroup;
 import meteordevelopment.meteorclient.systems.modules.Category;
@@ -16,11 +22,19 @@ public class EarthMC_Meteor extends MeteorAddon {
 
     @Override
     public void onInitialize() {
+        RefreshData.init();
+        FileHandling.ensureFileExists("player_blacklist.txt");
+        FileHandling.ensureFileExists("nation_blacklist.txt");
 
         Modules.get().add(new Hunter());
-        RefreshData.init();
 
         Hud.get().register(HunterDisplay.INFO);
+
+        Commands.add(new BlacklistPlayerCommand());
+        Commands.add(new BlacklistNationCommand());
+
+        Data.currentPlayerBlacklist = Blacklist.getBlacklist("player");
+        Data.currentNationBlacklist = Blacklist.getBlacklist("nation");
     }
 
     @Override
