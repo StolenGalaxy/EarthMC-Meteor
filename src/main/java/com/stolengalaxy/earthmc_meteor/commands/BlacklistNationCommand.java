@@ -3,6 +3,9 @@ package com.stolengalaxy.earthmc_meteor.commands;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.stolengalaxy.earthmc_meteor.utils.Blacklist;
+import com.stolengalaxy.earthmc_meteor.utils.Data;
+import com.stolengalaxy.earthmc_meteor.utils.FileHandling;
+import com.stolengalaxy.earthmc_meteor.utils.RefreshData;
 import meteordevelopment.meteorclient.commands.Command;
 import net.minecraft.command.CommandSource;
 
@@ -17,7 +20,7 @@ public class BlacklistNationCommand extends Command {
     public void build(LiteralArgumentBuilder<CommandSource> builder){
         builder.then(literal("add")
             .then(argument("nation", StringArgumentType.string()).executes(context -> {
-                String nationName = StringArgumentType.getString(context, "nation").strip();
+                String nationName = StringArgumentType.getString(context, "nation").strip().toLowerCase();
 
                 List<String> currentList = Blacklist.getBlacklist("nation");
 
@@ -33,7 +36,7 @@ public class BlacklistNationCommand extends Command {
 
         builder.then(literal("remove")
             .then(argument("nation", StringArgumentType.string()).executes(context -> {
-                String nationName = StringArgumentType.getString(context, "nation").strip();
+                String nationName = StringArgumentType.getString(context, "nation").strip().toLowerCase();
 
                 List<String> currentList = Blacklist.getBlacklist("nation");
                 if(currentList.contains(nationName)){
@@ -58,6 +61,17 @@ public class BlacklistNationCommand extends Command {
             if(index == 1){
                 info("Nation spawn blacklist is empty!");
             }
+            return SINGLE_SUCCESS;
+        }));
+
+        builder.then(literal("reset").executes(context -> {
+            FileHandling.deleteFile("nation_blacklist.txt");
+            FileHandling.ensureFileExists("nation_blacklist.txt");
+
+            Data.currentNationBlacklist = Blacklist.getBlacklist("nation");
+            RefreshData.refreshTownData();
+
+            info("Nation spawn blacklist has been reset");
             return SINGLE_SUCCESS;
         }));
 

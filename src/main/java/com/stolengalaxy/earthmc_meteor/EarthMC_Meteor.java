@@ -3,6 +3,8 @@ package com.stolengalaxy.earthmc_meteor;
 import com.stolengalaxy.earthmc_meteor.commands.BlacklistNationCommand;
 import com.stolengalaxy.earthmc_meteor.commands.BlacklistPlayerCommand;
 import com.stolengalaxy.earthmc_meteor.modules.Hunter;
+import com.stolengalaxy.earthmc_meteor.utils.Blacklist;
+import com.stolengalaxy.earthmc_meteor.utils.Data;
 import com.stolengalaxy.earthmc_meteor.utils.FileHandling;
 import com.stolengalaxy.earthmc_meteor.utils.RefreshData;
 import meteordevelopment.meteorclient.addons.GithubRepo;
@@ -30,6 +32,9 @@ public class EarthMC_Meteor extends MeteorAddon {
 
         Commands.add(new BlacklistPlayerCommand());
         Commands.add(new BlacklistNationCommand());
+
+        Data.currentPlayerBlacklist = Blacklist.getBlacklist("player");
+        Data.currentNationBlacklist = Blacklist.getBlacklist("nation");
     }
 
     @Override

@@ -3,7 +3,7 @@ import java.util.List;
 
 public class Blacklist {
     public static void blacklist(String type, String name){
-        FileHandling.addLine(type + "_blacklist.txt", name);
+        FileHandling.addLine(type + "_blacklist.txt", name.toLowerCase());
         System.out.println("Added " + name + " to " + type + " blacklist");
 
         if(type.equals("player")){

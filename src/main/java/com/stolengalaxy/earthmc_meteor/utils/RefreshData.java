@@ -55,9 +55,9 @@ public class RefreshData {
                 playersArray.forEach(player -> {
                     JsonObject playerObject = player.getAsJsonObject();
 
-                    String playerName = playerObject.get("name").getAsString();
+                    String playerName = playerObject.get("name").getAsString().toLowerCase();
 
-                    if(playerName.equals(ownUsername) || Data.currentPlayerBlacklist.contains(playerName)){
+                    if(playerName.equalsIgnoreCase(ownUsername) || Data.currentPlayerBlacklist.contains(playerName)){
                         return;
                     }
 
@@ -139,7 +139,7 @@ public class RefreshData {
 
                     } else if (town_object.toString().contains("point")) {
                         String nationName = town_object.get("tooltip").getAsString().split("<b>")[1].split("</b>")[0].strip();
-                        if(!Data.currentNationBlacklist.contains(nationName)){
+                        if(!Data.currentNationBlacklist.contains(nationName.toLowerCase())){
                             JsonObject spawnPoint = town_object.get("point").getAsJsonObject();
                             nationSpawns.add(nationName, spawnPoint);
                         }
