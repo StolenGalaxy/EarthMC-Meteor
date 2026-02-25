@@ -20,14 +20,12 @@ public class RefreshData {
     }
 
     public record Town (String name, JsonArray points, List<Integer> extrema){}
-    //TODO Nation spawns record
     @EventHandler
     private static void onGameJoin(GameJoinedEvent event){
         System.out.println("Joined game, starting data refresh.");
 
         refreshPlayerData();
         refreshTownData();
-
     }
 
     @EventHandler
@@ -39,7 +37,6 @@ public class RefreshData {
         if(timer % 12000 == 0){
             refreshTownData();
         }
-
     }
 
     public static void refreshPlayerData(){
@@ -78,7 +75,6 @@ public class RefreshData {
                 exception.printStackTrace();
                 return null;
             });
-
     }
 
     public static void refreshTownData(){
@@ -104,8 +100,6 @@ public class RefreshData {
                             });
                         });
 
-                        //JsonArray points = .get(0).getAsJsonArray().get(0).getAsJsonArray();
-
                         int max_x = points.get(0).getAsJsonObject().get("x").getAsInt();
                         int max_z = points.get(0).getAsJsonObject().get("z").getAsInt();
                         int min_x = max_x;
@@ -129,21 +123,19 @@ public class RefreshData {
                             }
                         }
 
-
                         List<Integer> extrema = new ArrayList<>(List.of(max_x, min_x, max_z, min_z));
 
                         Town town = new Town(townName, points, extrema);
-
                         towns.put(townName, town);
                         Data.townNames.add(townName);
 
                     } else if (town_object.toString().contains("point")) {
-                        String nationName = town_object.get("tooltip").getAsString().split("<b>")[1].split("</b>")[0].strip();
+                        String nationName = town_object.get("tooltip").getAsString().split("(Capital of )")[1].split("\\)\\n")[0].strip();
+                        System.out.println(nationName);
                         if(!Data.currentNationBlacklist.contains(nationName.toLowerCase())){
                             JsonObject spawnPoint = town_object.get("point").getAsJsonObject();
                             nationSpawns.add(nationName, spawnPoint);
                         }
-
                     }
 
                 });
