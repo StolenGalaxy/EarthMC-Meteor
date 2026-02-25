@@ -36,8 +36,9 @@ public class Hunter extends Module {
 
     //variables for auto town blacklisting
     private JsonObject closestNationSpawnCoords = new JsonObject();
-    private String closestNationSpawnName = "";
+    private String closestNationName = "";
     private boolean blacklisted = false;
+    private boolean consideredBlacklisting = false;
 
     public Hunter(){
         super(EarthMC_Meteor.EarthMC, "Hunter", "Finds optimal hunting targets");
@@ -136,10 +137,17 @@ public class Hunter extends Module {
         } else if (!currentTarget.isEmpty()) {
             targetInvisibleTicks = 0;
         }
+
+        // has enough time passed to consider auto blacklisting town?
+        if(timer - initialTeleportTime > 600 && autoBlacklistTowns.get()){
+            considerAutoTownBlacklist();
+        }
     }
 
     private void findTarget(){
+        consideredBlacklisting = false;
         teleportUnnecessary = false;
+
         if(!currentTarget.isEmpty() && targetAvailable()){
             info("Target still available. Continuing.");
             return;
@@ -151,7 +159,7 @@ public class Hunter extends Module {
         }
 
         int shortestNationSpawnDistance = 9999999;
-        String closestNationName = "";
+        closestNationName = "";
         String targetName = "";
 
         List<String> availablePlayers = Calculator.findOutOfTownPlayers();
@@ -191,6 +199,8 @@ public class Hunter extends Module {
             }
 
         }
+
+        // probably a much easier way to lay out this whole section
         baritoneCommand = "#goto " + targetCoords.getAsJsonObject().get("x") + " " + targetCoords.getAsJsonObject().get("z");
         if(useBaritone.get() && !autoTeleport.get()){
             ChatUtils.sendPlayerMsg("#stop");
@@ -229,14 +239,15 @@ public class Hunter extends Module {
     }
 
     private void considerAutoTownBlacklist(){
-        if (useBaritone.get() && autoTeleport.get() && autoBlacklistTowns.get() && Calculator.myDistanceToCoords(closestNationSpawnCoords) < 50){
-
+        if (consideredBlacklisting && useBaritone.get() && autoTeleport.get() && autoBlacklistTowns.get() && Calculator.myDistanceToCoords(closestNationSpawnCoords) < 50){
+            consideredBlacklisting = false;
             ChatUtils.sendPlayerMsg("#stop");
-            blacklisted = true;
             info("Nation spawn appears to not have an exit. Blacklisting.");
-            Blacklist.blacklist("nation", closestNationSpawnName);
+            Blacklist.blacklist("nation", closestNationName);
 
             findTarget();
+        } else{
+            consideredBlacklisting = true;
         }
     }
 }
