@@ -2,6 +2,7 @@ package com.stolengalaxy.earthmc_meteor.modules;
 
 import com.google.gson.JsonObject;
 import com.stolengalaxy.earthmc_meteor.EarthMC_Meteor;
+import com.stolengalaxy.earthmc_meteor.utils.Blacklist;
 import com.stolengalaxy.earthmc_meteor.utils.Calculator;
 import com.stolengalaxy.earthmc_meteor.utils.Data;
 import meteordevelopment.meteorclient.events.world.TickEvent;
@@ -33,6 +34,10 @@ public class Hunter extends Module {
     private int targetInvisibleTicks = 0;
     private boolean teleportUnnecessary = false;
 
+    //variables for auto town blacklisting
+    private JsonObject closestNationSpawnCoords = new JsonObject();
+    private String closestNationSpawnName = "";
+    private boolean blacklisted = false;
 
     public Hunter(){
         super(EarthMC_Meteor.EarthMC, "Hunter", "Finds optimal hunting targets");
@@ -43,7 +48,15 @@ public class Hunter extends Module {
 
     private final Setting<Boolean> autoTeleport = autoHuntSettings.add(new BoolSetting.Builder()
         .name("Auto Teleport")
-        .description("Uses /n spawn to teleport to the nearest nation spawn to the target player\n (As long as the teleport would take the player more than 100 blocks closer to the target than currently)")
+        .description("Uses /n spawn to teleport to the nearest nation spawn to the target player\n (As long as the " +
+            "teleport would take the player more than 100 blocks closer to the target than currently)")
+        .defaultValue(true)
+        .build()
+    );
+
+    private final Setting<Boolean> autoBlacklistTowns = autoHuntSettings.add(new BoolSetting.Builder()
+        .name("Auto Blacklist Towns")
+        .description("Will attempt to automatically blacklist towns that are blocked to prevent exit.\n(Auto Teleport and Use Baritone must both be enabled as well)")
         .defaultValue(true)
         .build()
     );
@@ -213,5 +226,17 @@ public class Hunter extends Module {
             }
         }
         return available;
+    }
+
+    private void considerAutoTownBlacklist(){
+        if (useBaritone.get() && autoTeleport.get() && autoBlacklistTowns.get() && Calculator.myDistanceToCoords(closestNationSpawnCoords) < 50){
+
+            ChatUtils.sendPlayerMsg("#stop");
+            blacklisted = true;
+            info("Nation spawn appears to not have an exit. Blacklisting.");
+            Blacklist.blacklist("nation", closestNationSpawnName);
+
+            findTarget();
+        }
     }
 }

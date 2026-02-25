@@ -131,7 +131,6 @@ public class RefreshData {
 
                     } else if (town_object.toString().contains("point")) {
                         String nationName = town_object.get("tooltip").getAsString().split("(Capital of )")[1].split("\\)\\n")[0].strip();
-                        System.out.println(nationName);
                         if(!Data.currentNationBlacklist.contains(nationName.toLowerCase())){
                             JsonObject spawnPoint = town_object.get("point").getAsJsonObject();
                             nationSpawns.add(nationName, spawnPoint);
