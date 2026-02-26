@@ -99,7 +99,6 @@ public class Hunter extends Module {
         timer++;
 
         if(!initialActivation && Data.playersInitialised && Data.townsInitialised){
-            info("new target 1");
             findTarget();
             initialActivation = true;
         } else if(timer % targetRefreshTime.get() == 0 && Data.playersInitialised && Data.townsInitialised && initialActivation){
@@ -111,7 +110,6 @@ public class Hunter extends Module {
                 expectingTeleportWithoutBaritone = false;
             }
 
-            info("new target 2");
             findTarget();
         } else if (timer - initialTeleportTime > 150) {
             if(expectingTeleportWithBaritone){
@@ -160,6 +158,10 @@ public class Hunter extends Module {
             if(useBaritone.get()){
                 ChatUtils.sendPlayerMsg("#stop");
             }
+        } else if (decidedToBlacklist && chatNotifications.get()) {
+            info("Nation spawn appears to not have an exit. Blacklisting " + closestNationName);
+            Blacklist.blacklist("nation", closestNationName);
+            ChatUtils.sendPlayerMsg("#stop");
         }
 
         int shortestNationSpawnDistance = 9999999;
@@ -197,9 +199,10 @@ public class Hunter extends Module {
             //if the current distance to the target player is greater than the nearest nation spawn's distance + 100, teleport to the nearest nation spawn
             if(Calculator.myDistanceToCoords(targetCoords.getAsJsonObject()) > shortestNationSpawnDistance + 100){
                 info("Teleporting to " + closestNationName);
-                //ChatUtils.sendPlayerMsg("/tp " + Data.nationSpawns.get(closestNationName).getAsJsonObject().get("x") + " 90 " + Data.nationSpawns.get(closestNationName).getAsJsonObject().get("z"));
+                //for testing - ChatUtils.sendPlayerMsg("/tp " + Data.nationSpawns.get(closestNationName).getAsJsonObject().get("x") + " 90 " + Data.nationSpawns.get(closestNationName).getAsJsonObject().get("z"));
                 ChatUtils.sendPlayerMsg("/n spawn " + closestNationName);
             }else{
+                info("Already close to target. Teleport not needed.");
                 teleportUnnecessary = true;
             }
 
@@ -247,10 +250,6 @@ public class Hunter extends Module {
         consideredBlacklisting = true;
         if (useBaritone.get() && autoTeleport.get() && autoBlacklistTowns.get() && Calculator.myDistanceToCoords(Data.nationSpawns.get(closestNationName).getAsJsonObject()) < 50){
             decidedToBlacklist = true;
-            Blacklist.blacklist("nation", closestNationName);
-            ChatUtils.sendPlayerMsg("#stop");
-            info("Nation spawn appears to not have an exit. Blacklisting.");
-
             findTarget();
         }
     }

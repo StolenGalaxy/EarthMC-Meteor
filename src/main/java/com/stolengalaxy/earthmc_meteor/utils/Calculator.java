@@ -123,7 +123,7 @@ public class Calculator {
 
         for(String nationName : Data.nationSpawns.keySet()){
             int distance = distanceBetweenCoords(playerCoords, Data.nationSpawns.get(nationName).getAsJsonObject());
-            if(distance < closestSpawnDistance){
+            if(distance < closestSpawnDistance && !Data.currentNationBlacklist.contains(nationName.toLowerCase())){
                 closestSpawnDistance = distance;
                 closestSpawnName = nationName;
             }

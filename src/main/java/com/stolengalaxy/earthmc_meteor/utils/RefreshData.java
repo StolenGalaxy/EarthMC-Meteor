@@ -42,6 +42,8 @@ public class RefreshData {
     public static void refreshPlayerData(){
         System.out.println("Refreshing player data");
 
+        Data.currentPlayerBlacklist = Blacklist.getBlacklist("player");
+
         Requests.getJson("https://map.earthmc.net/tiles/players.json")
             .thenAccept(json -> {
                 JsonObject players = new JsonObject();
@@ -79,6 +81,8 @@ public class RefreshData {
 
     public static void refreshTownData(){
         System.out.println("Refreshing town data");
+
+        Data.currentNationBlacklist = Blacklist.getBlacklist("nation");
 
         Requests.getJson("https://map.earthmc.net/tiles/minecraft_overworld/markers.json")
             .thenAccept(json -> {
@@ -131,6 +135,7 @@ public class RefreshData {
 
                     } else if (town_object.toString().contains("point")) {
                         String nationName = town_object.get("tooltip").getAsString().split("(Capital of )")[1].split("\\)\\n")[0].strip();
+
                         if(!Data.currentNationBlacklist.contains(nationName.toLowerCase())){
                             JsonObject spawnPoint = town_object.get("point").getAsJsonObject();
                             nationSpawns.add(nationName, spawnPoint);
