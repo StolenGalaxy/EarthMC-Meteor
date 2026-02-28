@@ -120,15 +120,19 @@ public class Hunter extends Module {
                     ChatUtils.sendPlayerMsg(baritoneCommand);
                     consideredBlacklisting = false;
                     decidedToBlacklist = false;
-                }else if(chatNotifications.get()){
-                    info("Teleport appears to have been unsuccessful. Cancelling Baritone.");
+                }else{
+                    if(chatNotifications.get()){
+                        info("Teleport appears to have been unsuccessful. Cancelling Baritone.");
+                    }
                     currentTarget = "";
                 }
                 expectingTeleportWithBaritone = false;
 
             } else if (expectingTeleportWithoutBaritone) {
                 if(!wasTeleportSuccessful()){
-                    info("Teleport appears to have been unsuccessful.");
+                    if(chatNotifications.get()){
+                        info("Teleport appears to have been unsuccessful.");
+                    }
                     currentTarget = "";
                 }
                 expectingTeleportWithoutBaritone = false;
@@ -153,15 +157,21 @@ public class Hunter extends Module {
         teleportUnnecessary = false;
 
         if(!currentTarget.isEmpty() && targetAvailable() && !decidedToBlacklist){
-            info("Target still available. Continuing.");
+            if(chatNotifications.get()){
+                info("Target still available. Continuing.");
+            }
             return;
-        } else if (!targetAvailable() && chatNotifications.get()) {
-            info("Target appears to have become unavailable.");
+        } else if (!targetAvailable()) {
+            if(chatNotifications.get()){
+                info("Target appears to have become unavailable.");
+            }
             if(useBaritone.get()){
                 ChatUtils.sendPlayerMsg("#stop");
             }
-        } else if (decidedToBlacklist && chatNotifications.get()) {
-            info("Nation spawn appears to not have an exit. Blacklisting " + closestNationName);
+        } else if (decidedToBlacklist) {
+            if(chatNotifications.get()){
+                info("Nation spawn appears to not have an exit. Blacklisting " + closestNationName);
+            }
             Blacklist.blacklist("nation", closestNationName);
             ChatUtils.sendPlayerMsg("#stop");
         }
@@ -174,8 +184,8 @@ public class Hunter extends Module {
         if (availablePlayers.isEmpty()){
             if(chatNotifications.get()){
                 info("No targets found.");
-                return;
             }
+            return;
         }
 
         for(String playerName : availablePlayers){
@@ -200,11 +210,16 @@ public class Hunter extends Module {
         if(autoTeleport.get()){
             //if the current distance to the target player is greater than the nearest nation spawn's distance + 100, teleport to the nearest nation spawn
             if(Calculator.myDistanceToCoords(targetCoords.getAsJsonObject()) > shortestNationSpawnDistance + 100){
-                info("Teleporting to " + closestNationName);
+                if(chatNotifications.get()){
+                    info("Teleporting to " + closestNationName);
+                }
+
                 //ChatUtils.sendPlayerMsg("/tp " + Data.nationSpawns.get(closestNationName).getAsJsonObject().get("x") + " 90 " + Data.nationSpawns.get(closestNationName).getAsJsonObject().get("z"));
                 ChatUtils.sendPlayerMsg("/n spawn " + closestNationName);
             }else{
-                info("Already close to target. Teleport not needed.");
+                if(chatNotifications.get()){
+                    info("Already close to target. Teleport not needed.");
+                }
                 teleportUnnecessary = true;
             }
 
