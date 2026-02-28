@@ -38,6 +38,7 @@ public class Hunter extends Module {
     private String closestNationName = "";
     private boolean consideredBlacklisting = false;
     private boolean decidedToBlacklist = false;
+    private JsonObject initialTeleportCoords = new JsonObject();
 
     public Hunter(){
         super(EarthMC_Meteor.EarthMC, "Hunter", "Finds optimal hunting targets");
@@ -114,6 +115,7 @@ public class Hunter extends Module {
         } else if (timer - initialTeleportTime > 150) {
             if(expectingTeleportWithBaritone){
                 if(wasTeleportSuccessful()){
+                    initialTeleportCoords = Calculator.myCoords();
                     ChatUtils.sendPlayerMsg("#stop");
                     ChatUtils.sendPlayerMsg(baritoneCommand);
                     consideredBlacklisting = false;
@@ -199,7 +201,7 @@ public class Hunter extends Module {
             //if the current distance to the target player is greater than the nearest nation spawn's distance + 100, teleport to the nearest nation spawn
             if(Calculator.myDistanceToCoords(targetCoords.getAsJsonObject()) > shortestNationSpawnDistance + 100){
                 info("Teleporting to " + closestNationName);
-                //for testing - ChatUtils.sendPlayerMsg("/tp " + Data.nationSpawns.get(closestNationName).getAsJsonObject().get("x") + " 90 " + Data.nationSpawns.get(closestNationName).getAsJsonObject().get("z"));
+                //ChatUtils.sendPlayerMsg("/tp " + Data.nationSpawns.get(closestNationName).getAsJsonObject().get("x") + " 90 " + Data.nationSpawns.get(closestNationName).getAsJsonObject().get("z"));
                 ChatUtils.sendPlayerMsg("/n spawn " + closestNationName);
             }else{
                 info("Already close to target. Teleport not needed.");
@@ -248,7 +250,7 @@ public class Hunter extends Module {
 
     private void considerAutoTownBlacklist(){
         consideredBlacklisting = true;
-        if (useBaritone.get() && autoTeleport.get() && autoBlacklistTowns.get() && Calculator.myDistanceToCoords(Data.nationSpawns.get(closestNationName).getAsJsonObject()) < 50){
+        if (useBaritone.get() && autoTeleport.get() && autoBlacklistTowns.get() && Calculator.myDistanceToCoords(initialTeleportCoords) < 50){
             decidedToBlacklist = true;
             findTarget();
         }
