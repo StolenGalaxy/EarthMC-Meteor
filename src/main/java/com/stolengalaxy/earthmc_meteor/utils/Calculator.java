@@ -19,6 +19,18 @@ public class Calculator {
         return client.getSession().getUsername();
     }
 
+    public static JsonObject myCoords(){
+        JsonObject coords = new JsonObject();
+        MinecraftClient client = MinecraftClient.getInstance();
+
+        if(client.player != null){
+            coords.addProperty("x", client.player.getBlockX());
+            coords.addProperty("z", client.player.getBlockZ());
+        }
+
+        return coords;
+    }
+
     public static Integer myDistanceToCoords(JsonObject coords){
         MinecraftClient client = MinecraftClient.getInstance();
         int xDistance = 0;
@@ -123,7 +135,7 @@ public class Calculator {
 
         for(String nationName : Data.nationSpawns.keySet()){
             int distance = distanceBetweenCoords(playerCoords, Data.nationSpawns.get(nationName).getAsJsonObject());
-            if(distance < closestSpawnDistance){
+            if(distance < closestSpawnDistance && !Data.currentNationBlacklist.contains(nationName.toLowerCase())){
                 closestSpawnDistance = distance;
                 closestSpawnName = nationName;
             }

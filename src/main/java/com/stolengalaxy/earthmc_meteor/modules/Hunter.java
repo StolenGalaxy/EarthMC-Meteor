@@ -2,6 +2,7 @@ package com.stolengalaxy.earthmc_meteor.modules;
 
 import com.google.gson.JsonObject;
 import com.stolengalaxy.earthmc_meteor.EarthMC_Meteor;
+import com.stolengalaxy.earthmc_meteor.utils.Blacklist;
 import com.stolengalaxy.earthmc_meteor.utils.Calculator;
 import com.stolengalaxy.earthmc_meteor.utils.Data;
 import meteordevelopment.meteorclient.events.world.TickEvent;
@@ -33,6 +34,11 @@ public class Hunter extends Module {
     private int targetInvisibleTicks = 0;
     private boolean teleportUnnecessary = false;
 
+    //variables for auto town blacklisting
+    private String closestNationName = "";
+    private boolean consideredBlacklisting = false;
+    private boolean decidedToBlacklist = false;
+    private JsonObject initialTeleportCoords = new JsonObject();
 
     public Hunter(){
         super(EarthMC_Meteor.EarthMC, "Hunter", "Finds optimal hunting targets");
@@ -43,7 +49,15 @@ public class Hunter extends Module {
 
     private final Setting<Boolean> autoTeleport = autoHuntSettings.add(new BoolSetting.Builder()
         .name("Auto Teleport")
-        .description("Uses /n spawn to teleport to the nearest nation spawn to the target player\n (As long as the teleport would take the player more than 100 blocks closer to the target than currently)")
+        .description("Uses /n spawn to teleport to the nearest nation spawn to the target player\n (As long as the " +
+            "teleport would take the player more than 100 blocks closer to the target than currently)")
+        .defaultValue(true)
+        .build()
+    );
+
+    private final Setting<Boolean> autoBlacklistTowns = autoHuntSettings.add(new BoolSetting.Builder()
+        .name("Auto Blacklist Towns")
+        .description("Will attempt to automatically blacklist towns that are blocked to prevent exit.\n(Auto Teleport and Use Baritone must both be enabled as well)")
         .defaultValue(true)
         .build()
     );
@@ -102,18 +116,36 @@ public class Hunter extends Module {
             if(expectingTeleportWithBaritone){
                 if(wasTeleportSuccessful()){
                     ChatUtils.sendPlayerMsg("#stop");
+                    ChatUtils.sendPlayerMsg("#set allowBreak false");
+                    ChatUtils.sendPlayerMsg("#set allowPlace false");
+                    ChatUtils.sendPlayerMsg("#set allowWaterBucketFall false");
+
+                    // there are some types of doors and gates not listed here, as well as trapdoors, but unfortunately there is a length limit
+                    ChatUtils.sendPlayerMsg("#set blocksToAvoid oak_door,oak_fence_gate,spruce_door,spruce_fence_gate," +
+                        "birch_door,birch_fence_gate,jungle_door,jungle_fence_gate,acacia_door,acacia_fence_gate,dark_oak_door," +
+                        "dark_oak_fence_gate,cherry_door,cherry_fence_gate,iron_door,copper_door");
+
+                    initialTeleportCoords = Calculator.myCoords();
                     ChatUtils.sendPlayerMsg(baritoneCommand);
-                }else if(chatNotifications.get()){
-                    info("Teleport appears to have been unsuccessful. Cancelling Baritone.");
+                    consideredBlacklisting = false;
+                    decidedToBlacklist = false;
+                }else{
+                    if(chatNotifications.get()){
+                        info("Teleport appears to have been unsuccessful. Cancelling Baritone.");
+                    }
+                    currentTarget = "";
                 }
                 expectingTeleportWithBaritone = false;
-                currentTarget = "";
+
             } else if (expectingTeleportWithoutBaritone) {
                 if(!wasTeleportSuccessful()){
-                    info("Teleport appears to have been unsuccessful.");
+                    if(chatNotifications.get()){
+                        info("Teleport appears to have been unsuccessful.");
+                    }
+                    currentTarget = "";
                 }
                 expectingTeleportWithoutBaritone = false;
-                currentTarget = "";
+
             }
         }
 
@@ -123,30 +155,46 @@ public class Hunter extends Module {
         } else if (!currentTarget.isEmpty()) {
             targetInvisibleTicks = 0;
         }
+
+        // has enough time passed to consider auto blacklisting town?
+        if(!consideredBlacklisting && timer - initialTeleportTime > 600 && autoBlacklistTowns.get()){
+            considerAutoTownBlacklist();
+        }
     }
 
     private void findTarget(){
         teleportUnnecessary = false;
-        if(!currentTarget.isEmpty() && targetAvailable()){
-            info("Target still available. Continuing.");
+
+        if(!currentTarget.isEmpty() && targetAvailable() && !decidedToBlacklist){
+            if(chatNotifications.get()){
+                info("Target still available. Continuing.");
+            }
             return;
-        } else if (!targetAvailable() && chatNotifications.get()) {
-            info("Target appears to have become unavailable.");
+        } else if (!targetAvailable()) {
+            if(chatNotifications.get()){
+                info("Target appears to have become unavailable.");
+            }
             if(useBaritone.get()){
                 ChatUtils.sendPlayerMsg("#stop");
             }
+        } else if (decidedToBlacklist) {
+            if(chatNotifications.get()){
+                info("Nation spawn appears to not have an exit. Blacklisting " + closestNationName);
+            }
+            Blacklist.blacklist("nation", closestNationName);
+            ChatUtils.sendPlayerMsg("#stop");
         }
 
         int shortestNationSpawnDistance = 9999999;
-        String closestNationName = "";
+        closestNationName = "";
         String targetName = "";
 
         List<String> availablePlayers = Calculator.findOutOfTownPlayers();
         if (availablePlayers.isEmpty()){
             if(chatNotifications.get()){
                 info("No targets found.");
-                return;
             }
+            return;
         }
 
         for(String playerName : availablePlayers){
@@ -171,13 +219,22 @@ public class Hunter extends Module {
         if(autoTeleport.get()){
             //if the current distance to the target player is greater than the nearest nation spawn's distance + 100, teleport to the nearest nation spawn
             if(Calculator.myDistanceToCoords(targetCoords.getAsJsonObject()) > shortestNationSpawnDistance + 100){
-                info("Teleporting to " + closestNationName);
+                if(chatNotifications.get()){
+                    info("Teleporting to " + closestNationName);
+                }
+
+                //ChatUtils.sendPlayerMsg("/tp " + Data.nationSpawns.get(closestNationName).getAsJsonObject().get("x") + " 90 " + Data.nationSpawns.get(closestNationName).getAsJsonObject().get("z"));
                 ChatUtils.sendPlayerMsg("/n spawn " + closestNationName);
             }else{
+                if(chatNotifications.get()){
+                    info("Already close to target. Teleport not needed.");
+                }
                 teleportUnnecessary = true;
             }
 
         }
+
+        // probably a much easier way to lay out this whole section
         baritoneCommand = "#goto " + targetCoords.getAsJsonObject().get("x") + " " + targetCoords.getAsJsonObject().get("z");
         if(useBaritone.get() && !autoTeleport.get()){
             ChatUtils.sendPlayerMsg("#stop");
@@ -213,5 +270,19 @@ public class Hunter extends Module {
             }
         }
         return available;
+    }
+
+    private void considerAutoTownBlacklist(){
+        consideredBlacklisting = true;
+        if (useBaritone.get() && autoTeleport.get() && autoBlacklistTowns.get() && Calculator.myDistanceToCoords(initialTeleportCoords) < 50){
+            decidedToBlacklist = true;
+            findTarget();
+        } else if(autoTeleport.get() && useBaritone.get()){
+            ChatUtils.sendPlayerMsg("#set allowBreak true");
+            ChatUtils.sendPlayerMsg("#set allowPlace true");
+            ChatUtils.sendPlayerMsg("#set allowWaterBucketFall true");
+
+            ChatUtils.sendPlayerMsg("#reset blocksToAvoid");
+        }
     }
 }
