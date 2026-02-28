@@ -115,8 +115,12 @@ public class Hunter extends Module {
         } else if (timer - initialTeleportTime > 150) {
             if(expectingTeleportWithBaritone){
                 if(wasTeleportSuccessful()){
-                    initialTeleportCoords = Calculator.myCoords();
                     ChatUtils.sendPlayerMsg("#stop");
+                    ChatUtils.sendPlayerMsg("#set allowBreak false");
+                    ChatUtils.sendPlayerMsg("#set allowPlace false");
+                    ChatUtils.sendPlayerMsg("#set allowWaterBucketFall false");
+
+                    initialTeleportCoords = Calculator.myCoords();
                     ChatUtils.sendPlayerMsg(baritoneCommand);
                     consideredBlacklisting = false;
                     decidedToBlacklist = false;
@@ -268,6 +272,10 @@ public class Hunter extends Module {
         if (useBaritone.get() && autoTeleport.get() && autoBlacklistTowns.get() && Calculator.myDistanceToCoords(initialTeleportCoords) < 50){
             decidedToBlacklist = true;
             findTarget();
+        } else if(autoTeleport.get() && useBaritone.get()){
+            ChatUtils.sendPlayerMsg("#set allowBreak true");
+            ChatUtils.sendPlayerMsg("#set allowPlace true");
+            ChatUtils.sendPlayerMsg("#set allowWaterBucketFall true");
         }
     }
 }
