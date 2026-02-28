@@ -120,6 +120,11 @@ public class Hunter extends Module {
                     ChatUtils.sendPlayerMsg("#set allowPlace false");
                     ChatUtils.sendPlayerMsg("#set allowWaterBucketFall false");
 
+                    // there are some types of doors and gates not listed here, as well as trapdoors, but unfortunately there is a length limit
+                    ChatUtils.sendPlayerMsg("#set blocksToAvoid oak_door,oak_fence_gate,spruce_door,spruce_fence_gate," +
+                        "birch_door,birch_fence_gate,jungle_door,jungle_fence_gate,acacia_door,acacia_fence_gate,dark_oak_door," +
+                        "dark_oak_fence_gate,cherry_door,cherry_fence_gate,iron_door,copper_door");
+
                     initialTeleportCoords = Calculator.myCoords();
                     ChatUtils.sendPlayerMsg(baritoneCommand);
                     consideredBlacklisting = false;
@@ -276,6 +281,8 @@ public class Hunter extends Module {
             ChatUtils.sendPlayerMsg("#set allowBreak true");
             ChatUtils.sendPlayerMsg("#set allowPlace true");
             ChatUtils.sendPlayerMsg("#set allowWaterBucketFall true");
+
+            ChatUtils.sendPlayerMsg("#reset blocksToAvoid");
         }
     }
 }
